@@ -1,0 +1,345 @@
+T24C4 000:001.035   SEGGER J-Link V9.14a Log File
+T24C4 000:001.130   DLL Compiled: Jan 28 2026 17:11:52
+T24C4 000:001.134   Logging started @ 2026-07-21 07:47
+T24C4 000:001.137   Process: C:\Users\qq292\.eclipse\com.renesas.platform_275973119\DebugComp\RA\e2-server-gdb.exe
+T24C4 000:001.145 - 1.142ms 
+T24C4 000:001.156 JLINK_GetDLLVersion()
+T24C4 000:001.159 - 0.004ms returns 91401
+T24C4 000:002.826 JLINK_OpenEx(...)
+T24C4 000:009.604   Firmware: J-Link Pro V4 V11 PLUS Feb compiled 20 2025 16:24:17 
+T24C4 000:011.025   Firmware: J-Link Pro V4 V11 PLUS Feb compiled 20 2025 16:24:17 
+T24C4 000:011.121   Decompressing FW timestamp took 83 us
+T24C4 000:013.555   Hardware: V11.00
+T24C4 000:013.565   S/N: 601023993
+T24C4 000:013.569   OEM: SEGGER
+T24C4 000:013.574   Feature(s): FlashBP, GDB, JFlash, FlashDL, RDI
+T24C4 000:014.639   Bootloader: (FW returned invalid version)
+T24C4 000:015.300   USB speed mode: High speed (480 MBit/s)
+T24C4 000:015.634   TELNET listener socket opened on port 19021
+T24C4 000:015.729   WEBSRV WEBSRV_Init(): Starting webserver thread(s)
+T24C4 000:015.883   WEBSRV Webserver running on local port 19080
+T24C4 000:015.968   Looking for J-Link GUI Server exe at: C:\Users\qq292\.eclipse\com.renesas.platform_275973119\DebugComp\RA\ARM\Segger_v9.14.1\JLinkGUIServer.exe
+T24C4 000:016.023   Looking for J-Link GUI Server exe at: D:\Single-chip\STLINK\JLink\JLink_V796\JLinkGUIServer.exe
+T24C4 000:016.032   Forking J-Link GUI Server: D:\Single-chip\STLINK\JLink\JLink_V796\JLinkGUIServer.exe
+T24C4 000:036.431   J-Link GUI Server info: "J-Link GUI server V7.96 "
+T24C4 000:041.174 - 38.346ms returns "O.K."
+T24C4 000:041.279 JLINK_ExecCommand("ProjectFile=D:\Single-chip\e2studio\ws7_xip\primary_cpu1_ra8p1/primary_cpu1_ra8p1 Debug_Attach.jlink", ...). 
+T24C4 000:055.633 - 14.354ms returns 0x00
+T24C4 000:055.920 JLINK_ExecCommand("device=R7KA8P1KF_CPU1", ...). 
+T24C4 000:056.886   Flash bank @ 0x02000000: SFL: Parsing sectorization info from ELF file
+T24C4 000:056.897     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000800, .SectorStartAddr = 0x00000000
+T24C4 000:056.903   FlashBank @0x02000000: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T24C4 000:057.259   Flash bank @ 0x02E07400: SFL: Parsing sectorization info from ELF file
+T24C4 000:057.266     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000010, .SectorStartAddr = 0x00000000
+T24C4 000:057.272   FlashBank @0x02C9F020: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T24C4 000:057.282   Flash bank @ 0x02E07400: SFL: Parsing sectorization info from ELF file
+T24C4 000:057.287     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000010, .SectorStartAddr = 0x00000000
+T24C4 000:057.293   FlashBank @0x02E07400: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T24C4 000:057.308   Flash bank @ 0x12000000: SFL: Parsing sectorization info from ELF file
+T24C4 000:057.313     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000800, .SectorStartAddr = 0x00000000
+T24C4 000:057.318   FlashBank @0x12000000: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T24C4 000:057.713   Flash bank @ 0x12E07400: SFL: Parsing sectorization info from ELF file
+T24C4 000:057.720     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000010, .SectorStartAddr = 0x00000000
+T24C4 000:057.726   FlashBank @0x12C9F4C0: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T24C4 000:057.737   Flash bank @ 0x12E07400: SFL: Parsing sectorization info from ELF file
+T24C4 000:057.742     FlashDevice.SectorInfo[0]: .SectorSize = 0x00000010, .SectorStartAddr = 0x00000000
+T24C4 000:057.748   FlashBank @0x12E07780: Sectorization info from SFL ELF file ignored because sectorization override from DLL / XML file is active.
+T24C4 000:057.800   Flash bank @ 0x70000000: SFL: Parsing sectorization info from ELF file
+T24C4 000:057.841     FlashDevice.SectorInfo[0]: .SectorSize = 0x00010000, .SectorStartAddr = 0x00000000
+T24C4 000:064.142   Flash bank @ 0x78000000: SFL: Parsing sectorization info from ELF file
+T24C4 000:064.156     FlashDevice.SectorInfo[0]: .SectorSize = 0x00010000, .SectorStartAddr = 0x00000000
+T24C4 000:070.229   Flash bank @ 0x80000000: SFL: Parsing sectorization info from ELF file
+T24C4 000:070.246     FlashDevice.SectorInfo[0]: .SectorSize = 0x00010000, .SectorStartAddr = 0x00000000
+T24C4 000:082.047   Flash bank @ 0x90000000: SFL: Parsing sectorization info from ELF file
+T24C4 000:082.066     FlashDevice.SectorInfo[0]: .SectorSize = 0x00010000, .SectorStartAddr = 0x00000000
+T24C4 000:094.226   Device "R7KA8P1KF_CPU1" selected.
+T24C4 000:094.523 - 38.602ms returns 0x00
+T24C4 000:094.599 JLINK_TIF_GetAvailable(...)
+T24C4 000:094.974 - 0.375ms 
+T24C4 000:094.984 JLINK_TIF_Select(JLINKARM_TIF_SWD)
+T24C4 000:096.209 - 1.224ms returns 0x00
+T24C4 000:096.224 JLINK_SetSpeed(4000)
+T24C4 000:096.481 - 0.259ms 
+T24C4 000:096.498 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:096.812   ConfigTargetSettings() start
+T24C4 000:096.819    J-Link Script File: Executing ConfigTargetSettings()
+T24C4 000:096.825   Configuring FlashDLNoRMWThreshold=0x200 in order to make sure that option bytes programming is done via read-modify-write
+T24C4 000:102.060   ConfigTargetSettings() end - Took 5.24ms
+T24C4 000:102.070   InitTarget() start
+T24C4 000:102.075    J-Link Script File: Executing InitTarget()
+T24C4 000:102.079   Identifying target device...
+T24C4 000:102.083   SWD selected. Executing JTAG -> SWD switching sequence...
+T24C4 000:103.006   Initializing DAP...
+T24C4 000:104.381   DAP initialized successfully.
+T24C4 000:104.393   Enabling secondary core if necessary...
+T24C4 000:105.768     Secondary core already enabled. Performing attach...
+T24C4 000:105.778   Determining TrustZone configuration...
+T24C4 000:107.205     Secure Debug: Enabled (SSD)
+T24C4 000:107.215   Determining currently configured transfer type by reading the AHB-AP CSW register.
+T24C4 000:108.167     --> Correct transfer type configured. Done.
+T24C4 000:108.175   InitTarget() end - Took 6.10ms
+T24C4 000:108.933   Found SW-DP with ID 0x6BA02477
+T24C4 000:111.151   DPIDR: 0x6BA02477
+T24C4 000:111.163   CoreSight SoC-400 or earlier
+T24C4 000:111.172   AP map detection skipped. Manually configured AP map found.
+T24C4 000:111.178   AP[0]: AHB-AP (IDR: Not set, ADDR: 0x00000000)
+T24C4 000:111.183   AP[1]: APB-AP (IDR: Not set, ADDR: 0x00000000)
+T24C4 000:111.188   AP[2]: AHB-AP (IDR: Not set, ADDR: 0x00000000)
+T24C4 000:112.071   AP[2]: Core found
+T24C4 000:112.089   AP[2]: AHB-AP ROM base: 0xE00FE000
+T24C4 000:112.502   CPUID register: 0x410FD214. Implementer code: 0x41 (ARM)
+T24C4 000:112.515   Feature set: Mainline
+T24C4 000:112.945   Cache: No cache
+T24C4 000:112.956   Found Cortex-M33 r0p4, Little endian.
+T24C4 000:113.587   -- Max. mem block: 0x00005C40
+T24C4 000:114.222   
+  ***** Warning: 
+T24C4 000:114.228   Cortex-M: NonCacheAwareDebugAHBAP == 1 specified but there is no workaround available for the connected core. Proper debug functionality cannot be guaranteed
+T24C4 000:114.519   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:115.043   CPU_WriteMem(4 bytes @ 0xE000EDF0)
+T24C4 000:115.533   CPU_ReadMem(4 bytes @ 0xE0002000)
+T24C4 000:115.945   FPUnit: 8 code (BP) slots and 0 literal slots
+T24C4 000:115.951   CPU_ReadMem(4 bytes @ 0xE000EDFC)
+T24C4 000:116.373   CPU_WriteMem(4 bytes @ 0xE000EDFC)
+T24C4 000:116.769   CPU_ReadMem(4 bytes @ 0xE0001000)
+T24C4 000:117.195   CPU_ReadMem(4 bytes @ 0xE0001000)
+T24C4 000:117.580   CPU_ReadMem(4 bytes @ 0xE0001028)
+T24C4 000:118.173   CPU_ReadMem(4 bytes @ 0xE0001038)
+T24C4 000:118.584   CPU_ReadMem(4 bytes @ 0xE0001048)
+T24C4 000:119.093   CPU_ReadMem(4 bytes @ 0xE0001058)
+T24C4 000:119.531   CPU_WriteMem(4 bytes @ 0xE0001000)
+T24C4 000:119.919   CPU_ReadMem(4 bytes @ 0xE000ED88)
+T24C4 000:120.319   CPU_WriteMem(4 bytes @ 0xE000ED88)
+T24C4 000:120.715   CPU_ReadMem(4 bytes @ 0xE000ED88)
+T24C4 000:121.138   CPU_WriteMem(4 bytes @ 0xE000ED88)
+T24C4 000:121.548   CPU_ReadMem(4 bytes @ 0xE000EFB8)
+T24C4 000:122.018   Security extension: implemented
+T24C4 000:122.029   Secure debug: enabled
+T24C4 000:122.034   CoreSight components:
+T24C4 000:122.039   ROMTbl[0] @ E00FE000
+T24C4 000:122.044   CPU_ReadMem(64 bytes @ 0xE00FE000)
+T24C4 000:122.705   CPU_ReadMem(32 bytes @ 0xE00FFFE0)
+T24C4 000:123.245   [0][0]: E00FF000 CID B105100D PID 000BB4C9 ROM Table
+T24C4 000:123.252   ROMTbl[1] @ E00FF000
+T24C4 000:123.257   CPU_ReadMem(64 bytes @ 0xE00FF000)
+T24C4 000:123.984   CPU_ReadMem(32 bytes @ 0xE000EFE0)
+T24C4 000:124.486   CPU_ReadMem(4 bytes @ 0xE000EFBC)
+T24C4 000:125.075   CPU_ReadMem(4 bytes @ 0xE000EFCC)
+T24C4 000:125.583   [1][0]: E000E000 CID B105900D PID 000BBD21 DEVARCH 47702A04 DEVTYPE 00 Cortex-M33
+T24C4 000:125.595   CPU_ReadMem(32 bytes @ 0xE0001FE0)
+T24C4 000:126.148   CPU_ReadMem(4 bytes @ 0xE0001FBC)
+T24C4 000:126.584   CPU_ReadMem(4 bytes @ 0xE0001FCC)
+T24C4 000:127.043   [1][1]: E0001000 CID B105900D PID 000BBD21 DEVARCH 47701A02 DEVTYPE 00 DWT
+T24C4 000:127.050   CPU_ReadMem(32 bytes @ 0xE0002FE0)
+T24C4 000:127.575   CPU_ReadMem(4 bytes @ 0xE0002FBC)
+T24C4 000:128.013   CPU_ReadMem(4 bytes @ 0xE0002FCC)
+T24C4 000:128.411   [1][2]: E0002000 CID B105900D PID 000BBD21 DEVARCH 47701A03 DEVTYPE 00 FPB
+T24C4 000:128.417   CPU_ReadMem(32 bytes @ 0xE0000FE0)
+T24C4 000:128.898   CPU_ReadMem(4 bytes @ 0xE0000FBC)
+T24C4 000:129.322   CPU_ReadMem(4 bytes @ 0xE0000FCC)
+T24C4 000:129.721   [1][3]: E0000000 CID B105900D PID 000BBD21 DEVARCH 47701A01 DEVTYPE 43 ITM
+T24C4 000:129.727   CPU_ReadMem(32 bytes @ 0xE0041FE0)
+T24C4 000:130.249   CPU_ReadMem(4 bytes @ 0xE0041FBC)
+T24C4 000:130.630   CPU_ReadMem(4 bytes @ 0xE0041FCC)
+T24C4 000:131.042   [1][5]: E0041000 CID B105900D PID 002BBD21 DEVARCH 47724A13 DEVTYPE 13 ETM
+T24C4 000:131.048   CPU_ReadMem(32 bytes @ 0xE0042FE0)
+T24C4 000:131.573   CPU_ReadMem(4 bytes @ 0xE0042FBC)
+T24C4 000:132.157   CPU_ReadMem(4 bytes @ 0xE0042FCC)
+T24C4 000:132.585   [1][6]: E0042000 CID B105900D PID 000BBD21 DEVARCH 47701A14 DEVTYPE 14 CSS600-CTI
+T24C4 000:132.597   CPU_ReadMem(32 bytes @ 0xE0040FE0)
+T24C4 000:133.072   CPU_ReadMem(4 bytes @ 0xE0040FBC)
+T24C4 000:133.470   CPU_ReadMem(4 bytes @ 0xE0040FCC)
+T24C4 000:133.890   [0][1]: E0040000 CID B105900D PID 000BBD21 DEVARCH 00000000 DEVTYPE 11 TPIU
+T24C4 000:133.924   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:134.369   Data:  01 00 10 00
+T24C4 000:134.376   Debug reg: DHCSR
+T24C4 000:134.381 - 37.882ms returns 0
+T24C4 000:134.395 JLINK_ReadMem(0x40204038, 0x4 Bytes, ...)
+T24C4 000:134.400   CPU_ReadMem(4 bytes @ 0x40204038)
+T24C4 000:134.884   Data:  04 00 00 00
+T24C4 000:134.890 - 0.495ms returns 0
+T24C4 000:134.927 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:134.933   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:135.375   Data:  01 00 10 00
+T24C4 000:135.386   Debug reg: DHCSR
+T24C4 000:135.391 - 0.463ms returns 0
+T24C4 000:135.412 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:135.419   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:135.824   Data:  01 00 10 00
+T24C4 000:135.830   Debug reg: DHCSR
+T24C4 000:135.834 - 0.422ms returns 0
+T24C4 000:135.841 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:135.845   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:136.265   Data:  01 00 10 00
+T24C4 000:136.274   Debug reg: DHCSR
+T24C4 000:136.279 - 0.438ms returns 0
+T24C4 000:136.290 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:136.296   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:136.727   Data:  01 00 10 00
+T24C4 000:136.752   Debug reg: DHCSR
+T24C4 000:136.757 - 0.466ms returns 0
+T24C4 000:136.765 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:136.769   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:137.194   Data:  01 00 10 00
+T24C4 000:137.200   Debug reg: DHCSR
+T24C4 000:137.205 - 0.439ms returns 0
+T24C4 000:137.210 JLINK_ReadMem(0x40204038, 0x4 Bytes, ...)
+T24C4 000:137.215   CPU_ReadMem(4 bytes @ 0x40204038)
+T24C4 000:137.775   Data:  04 00 00 00
+T24C4 000:137.789 - 0.578ms returns 0
+T24C4 000:137.799 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:137.807   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:138.196   Data:  01 00 10 00
+T24C4 000:138.204   Debug reg: DHCSR
+T24C4 000:138.209 - 0.410ms returns 0
+T24C4 000:138.220 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:138.226   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:138.580   Data:  01 00 10 00
+T24C4 000:138.587   Debug reg: DHCSR
+T24C4 000:138.592 - 0.371ms returns 0
+T24C4 000:138.598 JLINK_ReadMem(0x40204030, 0x4 Bytes, ...)
+T24C4 000:138.603   CPU_ReadMem(4 bytes @ 0x40204030)
+T24C4 000:139.131   Data:  00 80 FF 00
+T24C4 000:139.144 - 0.546ms returns 0
+T24C4 000:139.318 JLINK_SetEndian(ARM_ENDIAN_LITTLE)
+T24C4 000:139.323 - 0.005ms returns 0
+T24C4 000:139.327 JLINK_SetInitRegsOnReset(OFF)
+T24C4 000:139.330 - 0.003ms returns 1
+T24C4 000:139.335 JLINK_SetResetType(JLINKARM_CM3_RESET_TYPE_NORMAL)
+T24C4 000:139.339 - 0.003ms returns JLINKARM_CM3_RESET_TYPE_NORMAL
+T24C4 000:139.344 JLINK_ExecCommand("EnableFlashBPs", ...). 
+T24C4 000:139.349 - 0.005ms returns 0x00
+T24C4 000:139.354 JLINK_ExecCommand("SetAllowFlashCache = 1", ...). 
+T24C4 000:139.359 - 0.004ms returns 0x01
+T24C4 000:139.364 JLINK_ExecCommand("SetRestartOnClose = 0", ...). 
+T24C4 000:139.368 - 0.004ms returns 0x01
+T24C4 000:139.373 JLINK_ExecCommand("SetAllowSimulation = 0", ...). 
+T24C4 000:139.378 - 0.005ms returns 0x00
+T24C4 000:139.383 JLINK_EnableSoftBPs(ON)
+T24C4 000:139.387 - 0.004ms 
+T24C4 000:139.393 JLINK_Connect()
+T24C4 000:139.800   ConfigTargetSettings() start
+T24C4 000:139.809    J-Link Script File: Executing ConfigTargetSettings()
+T24C4 000:139.813   Configuring FlashDLNoRMWThreshold=0x200 in order to make sure that option bytes programming is done via read-modify-write
+T24C4 000:146.390   ConfigTargetSettings() end - Took 6.58ms
+T24C4 000:146.402   InitTarget() start
+T24C4 000:146.407    J-Link Script File: Executing InitTarget()
+T24C4 000:146.411   Identifying target device...
+T24C4 000:146.416   SWD selected. Executing JTAG -> SWD switching sequence...
+T24C4 000:147.222   Initializing DAP...
+T24C4 000:148.323   DAP initialized successfully.
+T24C4 000:148.334   Enabling secondary core if necessary...
+T24C4 000:149.629     Secondary core already enabled. Performing attach...
+T24C4 000:149.638   Determining TrustZone configuration...
+T24C4 000:151.078     Secure Debug: Enabled (SSD)
+T24C4 000:151.087   Determining currently configured transfer type by reading the AHB-AP CSW register.
+T24C4 000:152.198     --> Correct transfer type configured. Done.
+T24C4 000:152.207   InitTarget() end - Took 5.79ms
+T24C4 000:153.001   Found SW-DP with ID 0x6BA02477
+T24C4 000:155.254   DPIDR: 0x6BA02477
+T24C4 000:155.266   CoreSight SoC-400 or earlier
+T24C4 000:155.271   AP map detection skipped. Manually configured AP map found.
+T24C4 000:155.276   AP[0]: AHB-AP (IDR: Not set, ADDR: 0x00000000)
+T24C4 000:155.281   AP[1]: APB-AP (IDR: Not set, ADDR: 0x00000000)
+T24C4 000:155.286   AP[2]: AHB-AP (IDR: Not set, ADDR: 0x00000000)
+T24C4 000:156.043   AP[2]: Core found
+T24C4 000:156.056   AP[2]: AHB-AP ROM base: 0xE00FE000
+T24C4 000:156.456   CPUID register: 0x410FD214. Implementer code: 0x41 (ARM)
+T24C4 000:156.464   Feature set: Mainline
+T24C4 000:156.883   Cache: No cache
+T24C4 000:156.890   Found Cortex-M33 r0p4, Little endian.
+T24C4 000:157.222   -- Max. mem block: 0x00005908
+T24C4 000:157.230   
+  ***** Warning: 
+T24C4 000:157.235   Cortex-M: NonCacheAwareDebugAHBAP == 1 specified but there is no workaround available for the connected core. Proper debug functionality cannot be guaranteed
+T24C4 000:157.242   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:157.631   CPU_ReadMem(4 bytes @ 0xE0002000)
+T24C4 000:158.044   FPUnit: 8 code (BP) slots and 0 literal slots
+T24C4 000:158.052   CPU_ReadMem(4 bytes @ 0xE000EDFC)
+T24C4 000:158.449   CPU_ReadMem(4 bytes @ 0xE0001000)
+T24C4 000:158.875   CPU_ReadMem(4 bytes @ 0xE0001000)
+T24C4 000:159.353   CPU_ReadMem(4 bytes @ 0xE0001028)
+T24C4 000:159.994   CPU_ReadMem(4 bytes @ 0xE0001038)
+T24C4 000:160.449   CPU_ReadMem(4 bytes @ 0xE0001048)
+T24C4 000:160.900   CPU_ReadMem(4 bytes @ 0xE0001058)
+T24C4 000:161.325   CPU_WriteMem(4 bytes @ 0xE0001000)
+T24C4 000:161.760   CPU_ReadMem(4 bytes @ 0xE000ED88)
+T24C4 000:162.196   CPU_WriteMem(4 bytes @ 0xE000ED88)
+T24C4 000:162.581   CPU_ReadMem(4 bytes @ 0xE000ED88)
+T24C4 000:162.971   CPU_WriteMem(4 bytes @ 0xE000ED88)
+T24C4 000:163.373   CPU_ReadMem(4 bytes @ 0xE000EFB8)
+T24C4 000:163.826   Security extension: implemented
+T24C4 000:163.832   Secure debug: enabled
+T24C4 000:163.837   CoreSight components:
+T24C4 000:163.841   ROMTbl[0] @ E00FE000
+T24C4 000:163.848   CPU_ReadMem(64 bytes @ 0xE00FE000)
+T24C4 000:164.421   CPU_ReadMem(32 bytes @ 0xE00FFFE0)
+T24C4 000:164.963   [0][0]: E00FF000 CID B105100D PID 000BB4C9 ROM Table
+T24C4 000:164.974   ROMTbl[1] @ E00FF000
+T24C4 000:164.980   CPU_ReadMem(64 bytes @ 0xE00FF000)
+T24C4 000:165.602   CPU_ReadMem(32 bytes @ 0xE000EFE0)
+T24C4 000:166.119   CPU_ReadMem(4 bytes @ 0xE000EFBC)
+T24C4 000:166.646   CPU_ReadMem(4 bytes @ 0xE000EFCC)
+T24C4 000:167.130   [1][0]: E000E000 CID B105900D PID 000BBD21 DEVARCH 47702A04 DEVTYPE 00 Cortex-M33
+T24C4 000:167.143   CPU_ReadMem(32 bytes @ 0xE0001FE0)
+T24C4 000:167.622   CPU_ReadMem(4 bytes @ 0xE0001FBC)
+T24C4 000:168.038   CPU_ReadMem(4 bytes @ 0xE0001FCC)
+T24C4 000:168.523   [1][1]: E0001000 CID B105900D PID 000BBD21 DEVARCH 47701A02 DEVTYPE 00 DWT
+T24C4 000:168.538   CPU_ReadMem(32 bytes @ 0xE0002FE0)
+T24C4 000:169.027   CPU_ReadMem(4 bytes @ 0xE0002FBC)
+T24C4 000:169.481   CPU_ReadMem(4 bytes @ 0xE0002FCC)
+T24C4 000:169.873   [1][2]: E0002000 CID B105900D PID 000BBD21 DEVARCH 47701A03 DEVTYPE 00 FPB
+T24C4 000:169.883   CPU_ReadMem(32 bytes @ 0xE0000FE0)
+T24C4 000:170.370   CPU_ReadMem(4 bytes @ 0xE0000FBC)
+T24C4 000:170.771   CPU_ReadMem(4 bytes @ 0xE0000FCC)
+T24C4 000:171.168   [1][3]: E0000000 CID B105900D PID 000BBD21 DEVARCH 47701A01 DEVTYPE 43 ITM
+T24C4 000:171.180   CPU_ReadMem(32 bytes @ 0xE0041FE0)
+T24C4 000:171.670   CPU_ReadMem(4 bytes @ 0xE0041FBC)
+T24C4 000:172.107   CPU_ReadMem(4 bytes @ 0xE0041FCC)
+T24C4 000:172.486   [1][5]: E0041000 CID B105900D PID 002BBD21 DEVARCH 47724A13 DEVTYPE 13 ETM
+T24C4 000:172.503   CPU_ReadMem(32 bytes @ 0xE0042FE0)
+T24C4 000:172.993   CPU_ReadMem(4 bytes @ 0xE0042FBC)
+T24C4 000:173.399   CPU_ReadMem(4 bytes @ 0xE0042FCC)
+T24C4 000:173.871   [1][6]: E0042000 CID B105900D PID 000BBD21 DEVARCH 47701A14 DEVTYPE 14 CSS600-CTI
+T24C4 000:173.883   CPU_ReadMem(32 bytes @ 0xE0040FE0)
+T24C4 000:174.417   CPU_ReadMem(4 bytes @ 0xE0040FBC)
+T24C4 000:174.856   CPU_ReadMem(4 bytes @ 0xE0040FCC)
+T24C4 000:175.269   [0][1]: E0040000 CID B105900D PID 000BBD21 DEVARCH 00000000 DEVTYPE 11 TPIU
+T24C4 000:175.281 - 35.888ms returns 0x00
+T24C4 000:175.370 JLINK_ReadMem(0xE000EDF0, 0x4 Bytes, ...)
+T24C4 000:175.379   CPU_ReadMem(4 bytes @ 0xE000EDF0)
+T24C4 000:175.826   Data:  01 00 10 00
+T24C4 000:175.836   Debug reg: DHCSR
+T24C4 000:175.841 - 0.470ms returns 0
+T24C4 000:175.853 JLINK_IsHalted()
+T24C4 000:176.291 - 0.438ms returns FALSE
+T24C4 000:176.326 JLINK_ReadMem(0x4000F054, 0x1 Bytes, ...)
+T24C4 000:176.333   CPU_ReadMem(1 bytes @ 0x4000F054)
+T24C4 000:176.887   Data:  01
+T24C4 000:176.900 - 0.574ms returns 0
+T24C4 000:176.906 JLINK_Halt()
+T24C4 000:179.767   
+  ***** Warning: 
+T24C4 000:179.778   CPU could not be halted
+T24C4 000:179.783 - 2.877ms returns 0x01
+T24C4 000:180.044 JLINK_ReadReg(XPSR)
+T24C4 000:180.608   CPU is running
+T24C4 000:180.620   
+  ***** Error: 
+T24C4 000:180.625   Cannot read register 16 (XPSR) while CPU is running
+T24C4 000:180.630 - 0.586ms returns 0x00000000
+T24C4 002:242.541 JLINK_Halt()
+T24C4 002:245.675   
+  ***** Warning: 
+T24C4 002:245.790   CPU could not be halted
+T24C4 002:245.797 - 3.256ms returns 0x01
+T24C4 002:245.903 JLINK_ReadReg(XPSR)
+T24C4 002:246.417   CPU is running
+T24C4 002:246.425   
+  ***** Error: 
+T24C4 002:246.430   Cannot read register 16 (XPSR) while CPU is running
+T24C4 002:246.440 - 0.537ms returns 0x00000000
+T24C4 002:249.684 JLINK_Close()
+T24C4 002:276.563 - 26.876ms
+T24C4 002:276.599   
+T24C4 002:276.602   Closed
