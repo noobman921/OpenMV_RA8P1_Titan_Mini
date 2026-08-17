@@ -134,6 +134,9 @@
 // Enable find_template()
 #define IMLIB_FIND_TEMPLATE
 
+// Enable find_features() / Haar Cascade
+#define IMLIB_ENABLE_FEATURES
+
 // Enable find_lbp()
 #define IMLIB_ENABLE_FIND_LBP
 
