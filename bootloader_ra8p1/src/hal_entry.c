@@ -81,7 +81,6 @@ void mcuboot_quick_setup()
 
     /* Verify the boot image and get its location. */
     struct boot_rsp rsp;
-
     assert(0 == boot_go(&rsp));
 
     /* Enter the application. */

@@ -1,0 +1,21 @@
+{
+  "0": {
+    "size": "0x30000",
+    "entries": [
+      {
+        "type": "haar",
+        "path": "{TOP}/lib/haar/haarcascade_frontalface.xml",
+        "stages": 25
+      },
+      {
+        "type": "haar",
+        "path": "{TOP}/lib/haar/haarcascade_eye.xml",
+        "stages": 0
+      },
+      {
+        "type": "tflite",
+        "path": "{TOP}/lib/models/fomo_face_detection.tflite"
+      }
+    ]
+  }
+}

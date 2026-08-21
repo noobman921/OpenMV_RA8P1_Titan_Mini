@@ -123,19 +123,14 @@
 // #define IMLIB_ENABLE_CNN
 // #endif
 
-// Enable Tensor Flow
-#if !defined(CUBEAI)
-#define IMLIB_ENABLE_TF
-#endif
+// Enable find_features() and Haar cascades.
+#define IMLIB_ENABLE_FEATURES
 
 // Enable FAST (20+ KBs).
 // #define IMLIB_ENABLE_FAST
 
 // Enable find_template()
 #define IMLIB_FIND_TEMPLATE
-
-// Enable find_features() / Haar Cascade
-#define IMLIB_ENABLE_FEATURES
 
 // Enable find_lbp()
 #define IMLIB_ENABLE_FIND_LBP
@@ -158,6 +153,9 @@
 // Enable PNG encoder/decoder
 #define IMLIB_ENABLE_PNG_ENCODER
 #define IMLIB_ENABLE_PNG_DECODER
+
+// Software ISP gamma correction
+#define IMLIB_ENABLE_GAMMA_LUT
 
 // Stereo Imaging
 // #define IMLIB_ENABLE_STEREO_DISPARITY

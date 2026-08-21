@@ -22,15 +22,6 @@
  * THE SOFTWARE.
  *
  * OV5640 driver.
- *
- * 2026-08-12: 整表对齐 Titan_Mini camera_layer.c 的 cam_config_table_normal_mode。
- *   - 分辨率 VGA 640x480：Titan 窗口 (Xstart=32, Ystart=22, ISP 输入 2560x1920),
- *     ISP 缩放输出 640x480 (0x5001 bit5 scaling enable), HTS/VTS=2128/1200
- *   - 传感器输出 YUV422 (0x4300=0x32, 0x501f=0x00)；RGB565 由 VIN 的
- *     YCbCr->RGB 转换 (color_space_convert_bypass=0) 产生, 与 Titan 一致
- *   - 关闭测试图案 (0x503D=0x00)
- *   - 只靠 reset() 写 default_regs 初始化；set_pixformat/set_framesize 的
- *     改写已注释, 避免覆盖 Titan 固定配置 (后续 VIN 侧转 RGB565 再适配)
  */
 #include "omv_boardconfig.h"
 #if (OMV_OV5640_ENABLE == 1)
@@ -69,11 +60,12 @@ static int16_t readout_y = 0;
 static uint16_t readout_w = ACTIVE_SENSOR_WIDTH;
 static uint16_t readout_h = ACTIVE_SENSOR_HEIGHT;
 
+// set_framesize 已 no-op, HTS/VTS 固定用 default_regs 的 proven 值。
+// static uint16_t hts_target = 0;
 
 // ============================================================================
-// 寄存器表：完全对齐 Titan_Mini cam_config_table_normal_mode，VGA 640x480。
-// Titan 已验证这套配置能出图。传感器输出 YUV422 (0x4300=0x32, 0x501f=0x00)，
-// 最后由 VIN 的 YCbCr->RGB 转换 (color_space_convert_bypass=0) 输出 RGB565。
+// 寄存器表：VGA 640x480。
+// 由 VIN 的 YCbCr->RGB 转换 (color_space_convert_bypass=0) 输出 RGB565。
 // 结束哨兵 {0x00,0x00,0x00} 必须在数组末尾 (reset() 以 reg[0]==0 停止)。
 // ============================================================================
 static const uint8_t default_regs[][3] = {
@@ -126,7 +118,7 @@ static const uint8_t default_regs[][3] = {
     { 0x38, 0x20, 0x41 }, // sensor vflip + ISP vflip
     { 0x38, 0x21, 0x01 }, // sensor mirror
 
-    // ========== image window (VGA) ==========
+    // ========== image window ==========
     // ISP 输入 2560x1920, 居中于 2624x1964 物理阵列, ISP 缩放输出 640x480。
     { 0x38, 0x00, 0x00 }, { 0x38, 0x01, 0x20 }, // Xstart = 32
     { 0x38, 0x02, 0x00 }, { 0x38, 0x03, 0x16 }, // Ystart = 22
@@ -139,11 +131,11 @@ static const uint8_t default_regs[][3] = {
     { 0x38, 0x08, 0x02 }, { 0x38, 0x09, 0x80 }, // Xout = 0x0280 = 640
     { 0x38, 0x0a, 0x01 }, { 0x38, 0x0b, 0xe0 }, // Yout = 0x01E0 = 480
 
-    // ========== subsample increment  ==========
+    // ========== subsample increment ==========
     { 0x38, 0x14, 0x31 }, // horizontal subsample increment
     { 0x38, 0x15, 0x31 }, // vertical subsample increment
 
-    // ========== timing / clock enables  ==========
+    // ========== timing / clock enables ==========
     { 0x37, 0x08, 0x64 }, // sensor timing B50
     { 0x40, 0x01, 0x02 }, // BLC start line
     { 0x40, 0x05, 0x1a }, // BLC always update
@@ -154,12 +146,12 @@ static const uint8_t default_regs[][3] = {
 
     // ========== output format: YUV422 ==========
     // 传感器只出 YUV422; RGB565 由 VIN 的 YCbCr->RGB 转换产生。
-    { 0x43, 0x00, 0x32 }, // format: YUV422 8-bit, YUYV order 
-    { 0x50, 0x1f, 0x00 }, // format MUX: ISP YUV422 output 
+    { 0x43, 0x00, 0x32 }, // format: YUV422 8-bit, YUYV order
+    { 0x50, 0x1f, 0x00 }, // format MUX: ISP YUV422 output (Titan)
 
     // ========== ISP on (produces valid image) ==========
     { 0x44, 0x07, 0x04 }, // JPEG QS
-    { 0x50, 0x00, 0xa7 }, // ISP: Lenc/gamma/BPC/WPC/CIP enable
+    { 0x50, 0x00, 0x27 }, // ISP: BPC/WPC/CIP enable, Lenc+AWB module off (对齐上游)
 
     // ========== AWB manual gains ==========
     { 0x34, 0x06, 0x01 }, // AWB gain manual enable
@@ -182,9 +174,9 @@ static const uint8_t default_regs[][3] = {
     { 0x53, 0x85, 0x82 }, { 0x53, 0x86, 0x88 }, { 0x53, 0x87, 0x7c }, { 0x53, 0x88, 0x60 },
     { 0x53, 0x89, 0x1c }, { 0x53, 0x8a, 0x01 }, { 0x53, 0x8b, 0x98 },
 
-    // ========== sharpness / noise ==========
-    { 0x53, 0x00, 0x08 }, { 0x53, 0x01, 0x30 }, { 0x53, 0x02, 0x5f }, { 0x53, 0x03, 0x10 },
-    { 0x53, 0x04, 0x08 }, { 0x53, 0x05, 0x30 }, { 0x53, 0x06, 0x28 }, { 0x53, 0x07, 0x38 },
+    // ========== sharpness / noise  ==========
+    { 0x53, 0x00, 0x08 }, { 0x53, 0x01, 0x30 }, { 0x53, 0x02, 0x3f }, { 0x53, 0x03, 0x10 },
+    { 0x53, 0x04, 0x08 }, { 0x53, 0x05, 0x30 }, { 0x53, 0x06, 0x18 }, { 0x53, 0x07, 0x28 },
     { 0x53, 0x09, 0x08 }, { 0x53, 0x0a, 0x30 }, { 0x53, 0x0b, 0x04 }, { 0x53, 0x0c, 0x06 },
 
     // ========== gamma table ==========
@@ -194,14 +186,13 @@ static const uint8_t default_regs[][3] = {
     { 0x54, 0x8c, 0xb2 }, { 0x54, 0x8d, 0xc8 }, { 0x54, 0x8e, 0xdd }, { 0x54, 0x8f, 0xf0 },
     { 0x54, 0x90, 0x15 },
 
-    // ========== UV adjust / brightness / contrast  ==========
-    { 0x55, 0x80, 0x0a }, { 0x55, 0x83, 0x40 }, { 0x55, 0x84, 0x20 }, { 0x55, 0x89, 0x10 },
+    // ========== UV adjust / brightness / contrast ==========
+    { 0x55, 0x80, 0x06 }, { 0x55, 0x83, 0x40 }, { 0x55, 0x84, 0x20 }, { 0x55, 0x89, 0x10 },
     { 0x55, 0x8a, 0x00 }, { 0x55, 0x8b, 0xf8 },
-    { 0x55, 0x85, 0x00 }, { 0x55, 0x86, 0x20 }, { 0x55, 0x87, 0x00 }, { 0x55, 0x88, 0x01 },
     { 0x50, 0x1d, 0x40 },
 
-    // ========== lens shading correction  ==========
-    { 0x50, 0x00, 0xa7 }, { 0x58, 0x00, 0x20 }, { 0x58, 0x01, 0x19 }, { 0x58, 0x02, 0x17 },
+    // ========== lens shading correction ==========
+    { 0x50, 0x00, 0x27 }, { 0x58, 0x00, 0x20 }, { 0x58, 0x01, 0x19 }, { 0x58, 0x02, 0x17 },
     { 0x58, 0x03, 0x16 }, { 0x58, 0x04, 0x18 }, { 0x58, 0x05, 0x21 }, { 0x58, 0x06, 0x0F },
     { 0x58, 0x07, 0x0A }, { 0x58, 0x08, 0x07 }, { 0x58, 0x09, 0x07 }, { 0x58, 0x0a, 0x0A },
     { 0x58, 0x0b, 0x0C }, { 0x58, 0x0c, 0x0A }, { 0x58, 0x0d, 0x03 }, { 0x58, 0x0e, 0x01 },
@@ -218,40 +209,42 @@ static const uint8_t default_regs[][3] = {
     { 0x58, 0x37, 0x2A }, { 0x58, 0x38, 0x44 }, { 0x58, 0x39, 0x4A }, { 0x58, 0x3a, 0x2C },
     { 0x58, 0x3b, 0x2a }, { 0x58, 0x3c, 0x46 }, { 0x58, 0x3d, 0xCE },
 
-    // ========== AVG table  ==========
-    { 0x56, 0x88, 0x22 }, { 0x56, 0x89, 0x22 }, { 0x56, 0x8a, 0x42 }, { 0x56, 0x8b, 0x24 },
-    { 0x56, 0x8c, 0x42 }, { 0x56, 0x8d, 0x24 }, { 0x56, 0x8e, 0x22 }, { 0x56, 0x8f, 0x22 },
+    // ========== AVG table ==========
+    // AVG 权重影响 AWB auto 的 R/G/B 增益计算; Titan 权重导致 AWB 压 B(白纸 B=8 vs R=26)。
+    // 上游全用 0x11(均匀权重), 对齐后 AWB 应能正确平衡三通道。
+    { 0x56, 0x88, 0x11 }, { 0x56, 0x89, 0x11 }, { 0x56, 0x8a, 0x11 }, { 0x56, 0x8b, 0x11 },
+    { 0x56, 0x8c, 0x11 }, { 0x56, 0x8d, 0x11 }, { 0x56, 0x8e, 0x11 }, { 0x56, 0x8f, 0x11 },
     { 0x50, 0x25, 0x00 },
 
-    // ========== AEC target  ==========
+    // ========== AEC target ==========
     { 0x3a, 0x0f, 0x40 }, { 0x3a, 0x10, 0x30 }, { 0x3a, 0x1b, 0x40 }, { 0x3a, 0x1e, 0x30 },
     { 0x3a, 0x11, 0x71 }, { 0x3a, 0x1f, 0x20 },
 
-    // ========== MIPI control / timing  ==========
+    // ========== MIPI control / timing ==========
     { 0x48, 0x00, 0x24 }, // MIPI Control 00
     { 0x30, 0x07, 0xfb }, // Disable DVP PCLK, enable MIPI clock domain
 
-    // ========== frame timing HTS/VTS  ==========
+    // ========== frame timing HTS/VTS ==========
     { 0x38, 0x0c, 0x08 }, { 0x38, 0x0d, 0x50 }, // HTS = 0x0850 = 2128
     { 0x38, 0x0e, 0x04 }, { 0x38, 0x0f, 0xb0 }, // VTS = 0x04B0 = 1200
 
-    // ========== 50/60Hz detector  ==========
+    // ========== 50/60Hz detector ==========
     { 0x3c, 0x01, 0xb4 }, { 0x3c, 0x00, 0x04 },
     { 0x3a, 0x08, 0x00 }, { 0x3a, 0x09, 0x93 },
     { 0x3a, 0x0e, 0x06 }, { 0x3a, 0x0a, 0x00 }, { 0x3a, 0x0b, 0x7b }, { 0x3a, 0x0d, 0x08 },
 
-    // ========== AEC/AGC power down domain control  ==========
+    // ========== AEC/AGC power down domain control ==========
     { 0x3a, 0x00, 0x3c }, { 0x3a, 0x02, 0x05 }, { 0x3a, 0x03, 0x44 }, { 0x3a, 0x14, 0x05 },
     { 0x3a, 0x15, 0x44 },
 
-    // ========== misc  ==========
+    // ========== misc ==========
     { 0x36, 0x18, 0x00 }, { 0x36, 0x12, 0x29 }, { 0x37, 0x08, 0x64 }, { 0x37, 0x09, 0x52 },
     { 0x37, 0x0c, 0x03 },
 
-    // ========== BLC  ==========
+    // ========== BLC ==========
     { 0x40, 0x01, 0x02 }, { 0x40, 0x04, 0x02 }, { 0x40, 0x05, 0x1a },
 
-    // ========== output data path  ==========
+    // ========== output data path ==========
     { 0x47, 0x13, 0x03 }, // JPEG mode select
     { 0x46, 0x0b, 0x35 }, // VFIFO
     { 0x46, 0x0c, 0x22 }, // VFIFO PCLK manual
@@ -259,16 +252,19 @@ static const uint8_t default_regs[][3] = {
     { 0x38, 0x24, 0x01 }, // MIPI timing tweak
     { 0x50, 0x01, 0xa3 }, // ISP: AWB/color matrix/UV/scale(bit5)/SDE enable
 
-    // ========== wake up  ==========
+    // ========== AWB auto ==========
+    // 上方 0x680/0x400/0x600 作为 AWB 起点, 由传感器自动调整
+    { 0x34, 0x06, 0x00 }, // AWB gain manual DISABLE (auto)
+
+    // ========== wake up ==========
     { 0x30, 0x08, 0x02 }, // wake up (clear power-down bit6)
 
-    // ========== disable test patterns  ==========
+    // ========== disable test patterns ==========
     { 0x50, 0x3d, 0x00 }, // ISP test pattern off
     { 0x47, 0x41, 0x00 }, // test pattern color bar off
 
-    // ========== MIPI virtual channel 0  ==========
+    // ========== MIPI virtual channel 0 ==========
     { 0x48, 0x14, 0x00 }, // MIPI CSI control: VC=0
-
 
     // End.
     { 0x00, 0x00, 0x00 }
@@ -306,14 +302,15 @@ static int reset(omv_csi_t *csi) {
     readout_w = ACTIVE_SENSOR_WIDTH;
     readout_h = ACTIVE_SENSOR_HEIGHT;
 
-    // HTS/VTS 固定用 default_regs 值。
+    // [RGB_TEST] set_framesize 已 no-op, HTS/VTS 固定用 default_regs 值。
     // hts_target = 0;
 
     // Reset all registers
     ret |= omv_i2c_write_reg(csi->i2c, csi->slv_addr, SCCB_SYSTEM_CTRL_1, 2, 0x11, 1);
     ret |= omv_i2c_write_reg(csi->i2c, csi->slv_addr, SYSTEM_CTROL0, 2, 0x82, 1);
 
-    // 软件复位后等 255ms, 让 SCCB/时钟稳定再配置 MIPI 
+    // [Titan 对齐] 软件复位后等 255ms, 让 SCCB/时钟稳定再配置 MIPI (Titan 在
+    // 0x82 后 wait 255ms 才继续, 5ms 太短可能导致传感器未就绪)。
     mp_hal_delay_ms(255);
 
     // Write default registers
@@ -355,7 +352,7 @@ static int write_reg(omv_csi_t *csi, uint16_t reg_addr, uint16_t reg_data) {
     return omv_i2c_write_reg(csi->i2c, csi->slv_addr, reg_addr, 2, reg_data, 1);
 }
 
-//  HTS/VTS 固定用 default_regs 的 proven 值 (Titan VGA 2128/1200),
+// [RGB_TEST] HTS/VTS 固定用 default_regs 的 proven 值 (Titan VGA 2128/1200),
 // 不再动态计算, calculate_hts/calculate_vts 保留为注释以备后续启用。
 /*
 static int calculate_hts(omv_csi_t *csi, uint16_t width) {
@@ -385,7 +382,7 @@ static int calculate_vts(omv_csi_t *csi, uint16_t readout_height) {
 */
 
 static int set_pixformat(omv_csi_t *csi, pixformat_t pixformat) {
-    // 只靠 default_regs 初始化, 不在此改写传感器格式。
+    // [RGB_TEST] 只靠 default_regs 初始化, 不在此改写传感器格式。
     // 传感器保持 YUV422 (0x4300=0x32, 0x501f=0x00), 与 Titan 一致;
     // RGB565 由 VIN 的 YCbCr->RGB 转换产生 (见 ports/ra8/omv_csi.c)。
     (void) csi;
@@ -394,7 +391,7 @@ static int set_pixformat(omv_csi_t *csi, pixformat_t pixformat) {
 }
 
 static int set_framesize(omv_csi_t *csi, omv_csi_framesize_t framesize) {
-    // 只靠 default_regs 初始化, 不在此改写传感器窗口/时序。
+    // [RGB_TEST] 只靠 default_regs 初始化, 不在此改写传感器窗口/时序。
     // 传感器固定为 Titan VGA (640x480, Xstart=32 Ystart=22, HTS/VTS=2128/1200);
     // 后续由 VIN 缩放输出, 见 ports/ra8/omv_csi.c。
     (void) csi;

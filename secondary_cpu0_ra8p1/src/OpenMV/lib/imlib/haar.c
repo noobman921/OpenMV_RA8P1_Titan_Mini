@@ -34,7 +34,6 @@
 #endif
 
 #include "imlib.h"
-#include "cascade_data.h"
 
 #ifdef IMLIB_ENABLE_FEATURES
 static int eval_weak_classifier(cascade_t *cascade, point_t pt, int t_idx, int w_idx, int r_idx) {
@@ -180,55 +179,6 @@ array_t *imlib_detect_objects(image_t *image, cascade_t *cascade, rectangle_t *r
     return objects;
 }
 
-// Load cascade from a memory buffer (embedded data).
-// This follows the same binary format as the file-based loader's buffer path.
-static void *cascade_mem_read(uint8_t **buf, size_t size) {
-    uint8_t *buf8 = *buf;
-    *buf += size;
-    return buf8;
-}
-
-int imlib_load_cascade_from_memory(cascade_t *cascade, const uint8_t *data, uint32_t data_len) {
-    memset(cascade, 0, sizeof(cascade_t));
-
-    uint8_t *buf = (uint8_t *) data + 12;
-
-    // Set detection window size and the number of stages.
-    cascade->window.w = ((uint32_t *) data)[0];
-    cascade->window.h = ((uint32_t *) data)[1];
-    cascade->n_stages = ((uint32_t *) data)[2];
-
-    // Set the number features in each stages
-    cascade->stages_array = cascade_mem_read(&buf, cascade->n_stages);
-    // Skip alignment
-    if ((uint32_t) buf % 4) {
-        buf += 4 - ((uint32_t) buf % 4);
-    }
-
-    // Sum the number of features in each stages
-    for (size_t i = 0; i < cascade->n_stages; i++) {
-        cascade->n_features += cascade->stages_array[i];
-    }
-
-    // Set features thresh array, alpha1, alpha 2, rects weights and rects
-    cascade->stages_thresh_array = cascade_mem_read(&buf, sizeof(int16_t) * cascade->n_stages);
-    cascade->tree_thresh_array = cascade_mem_read(&buf, sizeof(int16_t) * cascade->n_features);
-    cascade->alpha1_array = cascade_mem_read(&buf, sizeof(int16_t) * cascade->n_features);
-    cascade->alpha2_array = cascade_mem_read(&buf, sizeof(int16_t) * cascade->n_features);
-    cascade->num_rectangles_array = cascade_mem_read(&buf, sizeof(int8_t) * cascade->n_features);
-
-    // Sum the number of rectangles in all features
-    for (size_t i = 0; i < cascade->n_features; i++) {
-        cascade->n_rectangles += cascade->num_rectangles_array[i];
-    }
-
-    // Set rectangles weights and rectangles (number of rectangles * 4 points)
-    cascade->weights_array = cascade_mem_read(&buf, cascade->n_rectangles);
-    cascade->rectangles_array = cascade_mem_read(&buf, cascade->n_rectangles * 4);
-
-    return 0;
-}
-
 #if MICROPY_VFS
 static void *cascade_buffer_read(uint8_t **buf, size_t size) {
     uint8_t *buf8 = *buf;
@@ -341,12 +291,8 @@ int imlib_load_cascade_from_file(cascade_t *cascade, const char *path) {
 #endif //(IMLIB_ENABLE_IMAGE_FILE_IO)
 
 int imlib_load_cascade(cascade_t *cascade, const char *path) {
-    // Check for built-in embedded cascade names first (no filesystem needed)
-    if (strcmp(path, "frontalface") == 0) {
-        return imlib_load_cascade_from_memory(cascade, cascade_frontalface, cascade_frontalface_len);
-    }
     #if MICROPY_VFS
-    // Fall back to file-based loading
+    // xml cascade
     return imlib_load_cascade_from_file(cascade, path);
     #else
     return -1;

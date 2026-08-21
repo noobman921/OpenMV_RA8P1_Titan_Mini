@@ -21,7 +21,7 @@ const dmac_extended_cfg_t omv_csi_dmac_transfer_extend =
 #else
   .irq = FSP_INVALID_VECTOR,
 #endif
-  .ipl = (12),
+  .ipl = (11),
   .channel = 0, .p_callback = omv_csi_dmac_callback, .p_context = NULL, .activation_source = ELC_EVENT_NONE, };
 const transfer_cfg_t omv_csi_dmac_transfer_cfg =
 { .p_info = &omv_csi_dmac_transfer_info, .p_extend = &omv_csi_dmac_transfer_extend, };

@@ -66,8 +66,8 @@ FSP Configuration
     Clocks: MSTP Change Delays: Enabled
     Clocks: Settling Delay (us): 30
     Main Oscillator Wait Time: 8163 cycles
-    Cache settings: Data cache: Disabled
-    Cache settings: Data cache forced write-through: Disabled
+    Cache settings: Data cache: Enabled
+    Cache settings: Data cache forced write-through: Enabled
     I/O Ports: Voltage Mode: VCC: High (VCC >= 2.7 V)
     I/O Ports: Voltage Mode: VCC2: High (VCC2 >= 2.7 V)
     
@@ -632,9 +632,6 @@ FSP Configuration
     
   Module "FreeRTOS Port (rm_freertos_port)"
   Module "FreeRTOS Heap 4"
-  Module "MRAM (r_mram)"
-    Parameter Checking: Default (BSP)
-    
   Module "OSPI (r_ospi_b)"
     Parameter Checking: Default (BSP)
     DMAC Support: Disable
@@ -701,6 +698,9 @@ FSP Configuration
     Parameter Checking: Default (BSP)
     
   Module "Transfer (r_dmac)"
+    Parameter Checking: Default (BSP)
+    
+  Module "MRAM (r_mram)"
     Parameter Checking: Default (BSP)
     
   FreeRTOS
@@ -1051,10 +1051,15 @@ FSP Configuration
       Number of Blocks (Valid only in Repeat,Block or Repeat-Block Mode): 0
       Activation Source: No ELC Trigger
       Callback: omv_csi_dmac_callback
-      Transfer End Interrupt Priority: Priority 12
+      Transfer End Interrupt Priority: Priority 11
       Interrupt Frequency: Interrupt after all transfers have completed
       Offset value (Valid only when address mode is Offset addition): 1
       Source Buffer Size: 1
+      
+    Instance "g_mram0 MRAM (r_mram)"
+      Name: g_mram0
+      Callback: NULL
+      MRAM Error Interrupt Priority: Disabled
       
   Thread "MPY Thread"
     Symbol: mpy_thread
@@ -1066,11 +1071,6 @@ FSP Configuration
     Allocate Secure Context: Enable
     
     Instance "FreeRTOS Heap 4"
-    Instance "g_mram0 MRAM (r_mram)"
-      Name: g_mram0
-      Callback: NULL
-      MRAM Error Interrupt Priority: Disabled
-      
     Instance "g_ospi0 OSPI (r_ospi_b)"
       General: Name: g_ospi0
       General: Unit: OSPI_B0

@@ -86,7 +86,7 @@ static int ra_csi_config(omv_csi_t *csi, omv_csi_config_t config){
         s_vin_capture_started = false;
     }
     else if(config == OMV_CSI_CONFIG_FRAMESIZE || config == OMV_CSI_CONFIG_PIXFORMAT){
-        // (见 omv_csi_ops_init, use_runtime_buffer=0), 不在此逐字段修改。
+        // 直接使用 FSP 生成的 g_cam_vin_cfg 的运行时拷贝
         // VIN 按 FSP 配置工作: VGA 640x480 输入 -> 无缩放, CSC YCbCr->RGB565
         // 输出 640x480 到静态 vin_image_buffer_1/2/3。
         err = R_VIN_Close(&g_cam_vin_ctrl);
@@ -114,14 +114,14 @@ static int ra_csi_shutdown(omv_csi_t *csi, int enable) {
     return ret;
 }
 
-//获取一帧数据
+//获取一帧数据 - 轮询帧序列变化, 拷贝最新静态数组到 framebuffer
 static int ra_csi_snapshot(omv_csi_t *csi, image_t *image, uint32_t flags){
     framebuffer_t *fb = csi->fb;
     size_t frame_size = fb->u * fb->v * 2;  // VGA 640x480 RGB565 = 614400
 
+    mp_int_t point0 = mp_hal_ticks_ms();
     // 静态模式: 首次 (或每次 Open 后) 需启动一次连续采集, VIN 自动轮转 buffer
     if (!s_vin_capture_started) {
-        // 避免传感器在 VIN Open 前出流导致 preclip 错误。
         omv_csi_t *csi_local = omv_csi_get(-1);
         omv_i2c_write_reg(csi_local->i2c, csi_local->slv_addr, 0x4202, 2, 0x00, 1);
         mp_hal_delay_ms(5);
@@ -132,29 +132,31 @@ static int ra_csi_snapshot(omv_csi_t *csi, image_t *image, uint32_t flags){
         s_vin_capture_started = true;
     }
 
-    // 等待新帧 (轮询 g_camera_frame_sequence, 类似 Titan camera_capture_post_process)
-    mp_uint_t point1 = mp_hal_ticks_ms();
-    for (mp_uint_t start = mp_hal_ticks_ms(); ; mp_event_handle_nowait()) {
-        if (g_camera_frame_sequence != g_camera_frame_sequence_processed) {
-            break;
-        }
-        if (flags & OMV_CSI_FLAG_NON_BLOCK) {
-            return OMV_CSI_ERROR_WOULD_BLOCK;
-        }
-        if ((mp_hal_ticks_ms() - start) > OMV_CSI_TIMEOUT_MS) {
-            return OMV_CSI_ERROR_CAPTURE_TIMEOUT;
-        }
-    }
+    mp_int_t point1 = mp_hal_ticks_ms();
+    // 等待新帧
+     for (mp_uint_t start = mp_hal_ticks_ms(); ; mp_event_handle_nowait()) {
+         if (g_camera_frame_sequence != g_camera_frame_sequence_processed) {
+             break;
+         }
+         if (flags & OMV_CSI_FLAG_NON_BLOCK) {
+             return OMV_CSI_ERROR_WOULD_BLOCK;
+         }
+         if ((mp_hal_ticks_ms() - start) > OMV_CSI_TIMEOUT_MS) {
+             return OMV_CSI_ERROR_CAPTURE_TIMEOUT;
+         }
+     }
+
     g_camera_frame_sequence_processed = g_camera_frame_sequence;
 
-
+    mp_int_t point2 = mp_hal_ticks_ms();
     // 从最新静态数组拷贝到 framebuffer 空闲 buffer
     vbuffer_t *buffer = framebuffer_acquire(fb, FB_FLAG_FREE | FB_FLAG_PEEK);
     if (buffer == NULL) {
         return OMV_CSI_ERROR_FRAMEBUFFER_ERROR;
     }
 
-    // 每段次数 = min(剩余, 65535), 循环直到搬完 frame_size 字节
+     // dmac: NORMAL 模式分段搬运, 自适应 frame_size。
+    // 每段次数 = min(剩余, 65535), 循环直到搬完 frame_size 字节。
     {
         const uint32_t bytes_per_xfer = 8;   // TRANSFER_SIZE_8_BYTE
         const uint32_t max_len        = 0xFFFF;  // uint16_t length 上限
@@ -190,8 +192,10 @@ static int ra_csi_snapshot(omv_csi_t *csi, image_t *image, uint32_t flags){
             remaining -= chunk;
         }
     }
-//    memcpy(buffer->data, (const void *) p_camera_capture_buffer_stored, frame_size);
+    SCB_InvalidateDCache_by_Addr((uint32_t *)buffer->data, frame_size);
+    mp_int_t point3 = mp_hal_ticks_ms();
 
+//    memcpy(buffer->data, (const void *) p_camera_capture_buffer_stored, frame_size);
     framebuffer_release(fb, FB_FLAG_FREE);
 
     // 更新 fb 元数据并构建 image
@@ -200,6 +204,9 @@ static int ra_csi_snapshot(omv_csi_t *csi, image_t *image, uint32_t flags){
     csi->fb->pixfmt = csi->pixformat;
 
     framebuffer_to_image(csi->fb, image);
+    mp_int_t point4 = mp_hal_ticks_ms();
+    printf("ra_csi_snapshot: VIN start=%dms, wait=%dms, dmac=%dms, total=%dms\n",
+           point1 - point0, point2 - point1, point3 - point2, point4 - point0);
     return 0;
 }
 
@@ -246,6 +253,8 @@ static int ra_clk_set_frequency(omv_clk_t *clk, uint32_t frequency){
 // VIN callback - 完全模仿 Titan cam_vin_callback:
 // frame_complete 时校验并记录完成 buffer 指针 + 递增帧序列。
 // VIN 以 use_runtime_buffer=0 自动连续采集, 无需在此重启捕获。
+static volatile uint32_t g_vin_last_tick = 0;
+static volatile uint32_t g_vin_interval_ms = 0;
 void cam_vin_callback(capture_callback_args_t *p_args){
     vin_event_t            event            = (vin_event_t) p_args->event;
     vin_interrupt_status_t interrupt_status = (vin_interrupt_status_t) p_args->interrupt_status;
@@ -291,13 +300,12 @@ void omv_csi_dmac_callback(transfer_callback_args_t *p_args){
 int omv_csi_ops_init(omv_csi_t *csi) {
     fsp_err_t err = FSP_SUCCESS;
 
-    // [Titan 风格] 直接拷贝 FSP 生成的 const 配置, 不逐字段修改。
     // use_runtime_buffer=0: VIN 自动连续采集到静态 vin_image_buffer_1/2/3 (SDRAM),
-    // callback 记录完成 buffer, snapshot 轮询后拷贝到 framebuffer。与 Titan 一致。
+    // callback 记录完成 buffer, snapshot 轮询后拷贝到 framebuffer。
     OMV_VIN_CFG = OMV_VIN_CFG_;
     OMV_VIN_CFG_EXTEND = OMV_VIN_CFG_EXTEND_;
 
-    // FSP 默认 use_runtime_buffer=0 (静态数组接收); 显式确认与 Titan 一致。
+    // FSP 默认 use_runtime_buffer=0 (静态数组接收);
     OMV_VIN_CFG_EXTEND.output_ctrl.use_runtime_buffer = 0;
     OMV_VIN_CFG.p_extend = &OMV_VIN_CFG_EXTEND;
 

@@ -102,8 +102,8 @@
       <property id="config.bsp.fsp.mcu.adc_dmac.samples_per_channel" value="32767"/>
       <property id="config.bsp.fsp.mcu.sci_b_lin.max_baud" value="7812500"/>
       <property id="config.bsp.fsp.mcu.ospi_b.spi_dspi_qspi_mode_max_freq_hz" value="120000000"/>
-      <property id="config.bsp.fsp.dcache" value="config.bsp.fsp.dcache.disabled"/>
-      <property id="config.bsp.fsp.mscr.forcewt" value="config.bsp.fsp.mscr.forcewt.disabled"/>
+      <property id="config.bsp.fsp.dcache" value="config.bsp.fsp.dcache.enabled"/>
+      <property id="config.bsp.fsp.mscr.forcewt" value="config.bsp.fsp.mscr.forcewt.enabled"/>
       <property id="config.bsp.fsp.mcu.rtc.err_adjustment_value.max_value" value="63"/>
       <property id="config.bsp.fsp.ioport.voltage_mode.vcc" value="config.bsp.fsp.ioport.voltage_mode.vcc.high"/>
       <property id="config.bsp.fsp.ioport.voltage_mode.vcc2" value="config.bsp.fsp.ioport.voltage_mode.vcc2.high"/>
@@ -427,11 +427,6 @@
     </module>
     <module id="module.middleware.rm_freertos_port.0"/>
     <module id="module.freertos.heap.4.607160206"/>
-    <module id="module.driver.flash_on_mram.1196887221">
-      <property id="module.driver.mram.name" value="g_mram0"/>
-      <property id="module.driver.mram.p_callback" value="NULL"/>
-      <property id="module.driver.mram.err_ipl" value="_disabled"/>
-    </module>
     <module id="module.driver.ospi_on_ospi_b.217997134">
       <property id="module.driver.ospi_b.name" value="g_ospi0"/>
       <property id="module.driver.ospi_b.unit" value="module.driver.ospi_b.unit.0"/>
@@ -938,10 +933,15 @@
       <property id="module.driver.transfer.num_blocks" value="0"/>
       <property id="module.driver.transfer.activation_event" value="enum.elc_none.none"/>
       <property id="module.driver.transfer.p_callback" value="omv_csi_dmac_callback"/>
-      <property id="module.driver.transfer.ipl" value="board.icu.common.irq.priority12"/>
+      <property id="module.driver.transfer.ipl" value="board.icu.common.irq.priority11"/>
       <property id="module.driver.transfer.interrupt" value="module.driver.transfer.interrupt.interrupt_end"/>
       <property id="module.driver.transfer.offset" value="1"/>
       <property id="module.driver.transfer.src.buffer" value="1"/>
+    </module>
+    <module id="module.driver.flash_on_mram.1370518279">
+      <property id="module.driver.mram.name" value="g_mram0"/>
+      <property id="module.driver.mram.p_callback" value="NULL"/>
+      <property id="module.driver.mram.err_ipl" value="_disabled"/>
     </module>
     <object id="rtos.awsfreertos.object.binary_semaphore.1837852979">
       <property id="rtos.awsfreertos.object.binary_semaphore.symbol" value="g_usb_write_complete_binary_semaphore"/>
@@ -969,6 +969,7 @@
         </stack>
       </stack>
       <stack module="module.driver.transfer_on_dmac.344598529"/>
+      <stack module="module.driver.flash_on_mram.1370518279"/>
     </context>
     <context id="rtos.awsfreertos.thread.0">
       <property id="_symbol" value="mpy_thread"/>
@@ -979,7 +980,6 @@
       <property id="rtos.awsfreertos.thread.allocation" value="rtos.awsfreertos.thread.allocation.static"/>
       <property id="rtos.awsfreertos.thread.secure_context" value="rtos.awsfreertos.thread.secure_context.enable"/>
       <stack module="module.freertos.heap.4.607160206"/>
-      <stack module="module.driver.flash_on_mram.1196887221"/>
       <stack module="module.driver.ospi_on_ospi_b.217997134"/>
       <stack module="module.driver.uart_on_sci_b_uart.1849537134"/>
       <stack module="module.driver.rtc_on_rtc.1016493096"/>
@@ -1334,7 +1334,6 @@
       <configSetting altId="usbfs.usb_dm.p815" configurationId="usbfs.usb_dm"/>
       <configSetting altId="usbfs.usb_dp.p814" configurationId="usbfs.usb_dp"/>
       <configSetting altId="usbfs.usb_vbus.p407" configurationId="usbfs.usb_vbus"/>
-      <configSetting altId="usbhs.mode.custom.free" configurationId="usbhs.mode"/>
     </pincfg>
   </raPinConfiguration>
 </raConfiguration>

@@ -142,7 +142,7 @@ void omv_main(void *pvParameters) {
         tusb_init();
     }
 #endif
-
+    
 // mipi test
 //    mipi_csi_test();
 //    while(1){

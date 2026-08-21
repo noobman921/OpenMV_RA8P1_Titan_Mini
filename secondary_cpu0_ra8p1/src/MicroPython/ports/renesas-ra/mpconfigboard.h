@@ -9,6 +9,7 @@
 #include "mpy_board_cfg.h"
 
 // 文件系统 — 外部OSPI Flash 8MB，前4MB保留（放固件/资源），文件系统从4MB开始占4MB
+// 在omv中弃用
 #define FLASH_SECTOR_SIZE   (4096)
 #define MICROPY_HW_FILESYSTEM_START_OFFSET (4 * 1024 * 1024)
 #define MICROPY_HW_FILESYSTEM_SIZE         (4 * 1024 * 1024)
@@ -28,9 +29,7 @@
 #define MICROPY_HEAP_END &_heap_end
 #endif
 
-
 // machine设置
-
 #define MICROPY_PY_MACHINE          (1)
 #define MICROPY_PY_MACHINE_INCLUDEFILE "ports/renesas-ra/modmachine.c"
 #if RA_SPI_NUM
@@ -63,6 +62,11 @@
 #define MICROPY_FATFS_RPATH (2)
 #define FFCONF_H			"lib/oofatfs/ffconf.h"
 #define MICROPY_FATFS_MAX_SS	(4096)
+// ROMFS on MRAM 用于OMV
+#define MICROPY_VFS_ROM           (1)
+// MRAM 地址和大小
+#define MICROPY_HW_ROMFS_PART0_ORIGIN  (0x020D0000)
+#define MICROPY_HW_ROMFS_PART0_LENGTH  (192 * 1024)
 // 外部Flash 未修改
 // External SPI Flash config
 //#if !MICROPY_HW_ENABLE_INTERNAL_FLASH_STORAGE

@@ -103260,6 +103260,14 @@ Q(<genexpr>)
 Q(<string>)
 Q(<stdin>)
 Q(utf-8)
+
+
+
+
+
+
+Q(/rom)
+Q(/rom/lib)
 # 83 "<stdin>"
 Q(APPLY_COLOR_PALETTE_FIRST)
 
@@ -103488,6 +103496,8 @@ Q(FLOAT32)
 Q(FLOAT64)
 
 Q(FROGEYE2020)
+
+Q(FileIO)
 
 Q(FileIO)
 
@@ -103863,6 +103873,8 @@ Q(TextIOWrapper)
 
 Q(TextIOWrapper)
 
+Q(TextIOWrapper)
+
 Q(TypeError)
 
 Q(TypeError)
@@ -103910,6 +103922,8 @@ Q(ValueError)
 Q(VfsFat)
 
 Q(VfsFat)
+
+Q(VfsRom)
 
 Q(WQXGA)
 
@@ -104035,9 +104049,13 @@ Q(__enter__)
 
 Q(__enter__)
 
+Q(__enter__)
+
 Q(__eq__)
 
 Q(__eq__)
+
+Q(__exit__)
 
 Q(__exit__)
 
@@ -104394,6 +104412,12 @@ Q(_slash_)
 Q(_slash_)
 
 Q(_slash_flash)
+
+Q(_slash_rom)
+
+Q(_slash_rom)
+
+Q(_slash_rom_slash_lib)
 
 Q(_space_)
 
@@ -104807,6 +104831,8 @@ Q(chdir)
 
 Q(chdir)
 
+Q(chdir)
+
 Q(cho_solve)
 
 Q(cholesky)
@@ -104834,6 +104860,8 @@ Q(clear_background)
 Q(clip)
 
 Q(clip_limit)
+
+Q(close)
 
 Q(close)
 
@@ -105587,6 +105615,8 @@ Q(getcwd)
 
 Q(getcwd)
 
+Q(getcwd)
+
 Q(getter)
 
 Q(getvalue)
@@ -105700,6 +105730,8 @@ Q(id)
 Q(idle)
 
 Q(ifft)
+
+Q(ilistdir)
 
 Q(ilistdir)
 
@@ -106283,6 +106315,8 @@ Q(mount)
 
 Q(mount)
 
+Q(mount)
+
 Q(mul)
 
 Q(mul)
@@ -106378,6 +106412,8 @@ Q(on)
 Q(on)
 
 Q(ones)
+
+Q(open)
 
 Q(open)
 
@@ -106595,6 +106631,8 @@ Q(read)
 
 Q(read)
 
+Q(read)
+
 Q(readblocks)
 
 Q(readblocks)
@@ -106623,7 +106661,7 @@ Q(readinto)
 
 Q(readinto)
 
-Q(readline)
+Q(readinto)
 
 Q(readline)
 
@@ -106632,6 +106670,12 @@ Q(readline)
 Q(readline)
 
 Q(readline)
+
+Q(readline)
+
+Q(readline)
+
+Q(readlines)
 
 Q(readlines)
 
@@ -106834,6 +106878,8 @@ Q(scratchpad)
 Q(search)
 
 Q(seed_threshold)
+
+Q(seek)
 
 Q(seek)
 
@@ -107051,15 +107097,19 @@ Q(stat)
 
 Q(stat)
 
-Q(staticmethod)
+Q(stat)
 
 Q(staticmethod)
 
-Q(statistics)
+Q(staticmethod)
 
 Q(statistics)
 
 Q(statistics)
+
+Q(statistics)
+
+Q(statvfs)
 
 Q(statvfs)
 
@@ -107176,6 +107226,8 @@ Q(tanh)
 Q(tanhsinh)
 
 Q(tau)
+
+Q(tell)
 
 Q(tell)
 
@@ -107344,6 +107396,8 @@ Q(uint8)
 Q(ulab)
 
 Q(ulab)
+
+Q(umount)
 
 Q(umount)
 
