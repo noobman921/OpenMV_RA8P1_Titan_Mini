@@ -10,6 +10,17 @@
 #include "omv_i2c.h"
 #include "omv_csi.h"
 
+// VIN callback - 完全模仿 Titan cam_vin_callback:
+// frame_complete 时校验并记录完成 buffer 指针 + 递增帧序列。
+// VIN 以 use_runtime_buffer=0 自动连续采集, 无需在此重启捕获。
+// VIN callback diagnostics (ISR-safe: volatile globals, printed in main loop)
+static volatile uint32_t g_vin_frame_complete = 0;
+static volatile uint32_t g_vin_buf_valid = 0;
+static volatile uint32_t g_vin_callback_count = 0;
+static volatile uint32_t g_vin_last_tick = 0;
+static volatile uint32_t g_vin_interval_ms = 0;
+
+
 // dmac
 transfer_info_t omv_csi_transfer_info_normal =
  {
@@ -134,7 +145,8 @@ static int ra_csi_snapshot(omv_csi_t *csi, image_t *image, uint32_t flags){
 
     mp_int_t point1 = mp_hal_ticks_ms();
     // 等待新帧
-     for (mp_uint_t start = mp_hal_ticks_ms(); ; mp_event_handle_nowait()) {
+     uint32_t wait_loops = 0;
+     for (mp_uint_t start = mp_hal_ticks_ms(); ; mp_event_handle_nowait(), wait_loops++) {
          if (g_camera_frame_sequence != g_camera_frame_sequence_processed) {
              break;
          }
@@ -205,8 +217,9 @@ static int ra_csi_snapshot(omv_csi_t *csi, image_t *image, uint32_t flags){
 
     framebuffer_to_image(csi->fb, image);
     mp_int_t point4 = mp_hal_ticks_ms();
-    printf("ra_csi_snapshot: VIN start=%dms, wait=%dms, dmac=%dms, total=%dms\n",
-           point1 - point0, point2 - point1, point3 - point2, point4 - point0);
+    printf("ra_csi_snapshot: VIN start=%dms, wait=%dms, dmac=%dms, total=%dms seq=%lu\n",
+           point1 - point0, point2 - point1, point3 - point2, point4 - point0,
+            g_camera_frame_sequence);
     return 0;
 }
 
@@ -250,46 +263,44 @@ static int ra_clk_set_frequency(omv_clk_t *clk, uint32_t frequency){
     return 0;
 }
 
-// VIN callback - 完全模仿 Titan cam_vin_callback:
-// frame_complete 时校验并记录完成 buffer 指针 + 递增帧序列。
-// VIN 以 use_runtime_buffer=0 自动连续采集, 无需在此重启捕获。
-static volatile uint32_t g_vin_last_tick = 0;
-static volatile uint32_t g_vin_interval_ms = 0;
+
+
+
 void cam_vin_callback(capture_callback_args_t *p_args){
     vin_event_t            event            = (vin_event_t) p_args->event;
     vin_interrupt_status_t interrupt_status = (vin_interrupt_status_t) p_args->interrupt_status;
+
+    // Diagnostics: measure VIN interrupt interval
+    g_vin_callback_count++;
+    uint32_t now = xTaskGetTickCountFromISR();
+    if (g_vin_last_tick != 0) {
+        g_vin_interval_ms = (now - g_vin_last_tick) * portTICK_PERIOD_MS;
+    }
+    g_vin_last_tick = now;
 
     if(event == VIN_EVENT_NOTIFY)
     {
         if (interrupt_status.bits.frame_complete)
         {
+            g_vin_frame_complete++;
+
             /* Capture Complete - Process data buffer pointer and index */
             if (camera_capture_buffer_is_valid(p_args->p_buffer))
             {
+                g_vin_buf_valid = 1;
                 p_camera_capture_buffer_stored = p_args->p_buffer;
                 g_camera_frame_sequence++;
+            }
+            else
+            {
+                g_vin_buf_valid = 0;
             }
         }
     }
 }
 
-// MIPI CSI callback - required by FSP but events are handled by VIN automatically
+
 void cam_mipi_csi_callback(mipi_csi_callback_args_t *p_args) {
-    // In this project, the application does not rely on any MIPI CSI events.
-    // FRAME_DATA is ignored because VIN automatically handles captured frames.
-    // DATA_LANE status changes are not monitored (stable 2-lane setup).
-    // VIRTUAL_CHANNEL is unused as only channel 0 is active.
-    // POWER and SHORT_PACKET_FIFO are ignored for simplicity.
-    switch (p_args->event) {
-        case MIPI_CSI_EVENT_DATA_LANE:
-        case MIPI_CSI_EVENT_FRAME_DATA:
-        case MIPI_CSI_EVENT_POWER:
-        case MIPI_CSI_EVENT_SHORT_PACKET_FIFO:
-        case MIPI_CSI_EVENT_VIRTUAL_CHANNEL:
-            break;
-        default:
-            break;
-    }
 }
 
 // dmac callback

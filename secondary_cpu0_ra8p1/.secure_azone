@@ -185,7 +185,6 @@
             <slot name="IRQ36.CPU0" secure="true"/>
             <slot name="IRQ37.CPU0" secure="true"/>
             <slot name="IRQ38.CPU0" secure="true"/>
-            <slot name="IRQ39.CPU0" secure="true"/>
         </peripheral>
         <peripheral name="PORT3.CPU0" group="PORT">
             <slot name="P300.CPU0" secure="true"/>

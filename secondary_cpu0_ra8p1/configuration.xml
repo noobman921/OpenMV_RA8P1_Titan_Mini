@@ -825,7 +825,7 @@
       <property id="module.driver.mipi_csi.option_data.data_type_enable_user" value="enum.mcu.mipi_csi.data_enable.yuv422_8bit"/>
       <property id="module.driver.mipi_csi.interrupt_ctrl.rx.priority" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.mipi_csi.interrupt_ctrl.data_lane_0.priority" value="board.icu.common.irq.priority12"/>
-      <property id="module.driver.mipi_csi.interrupt_ctrl.vc_0.priority" value="board.icu.common.irq.priority12"/>
+      <property id="module.driver.mipi_csi.interrupt_ctrl.vc_0.priority" value="_disabled"/>
       <property id="module.driver.mipi_csi.interrupt_ctrl.power_management.priority" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.mipi_csi.interrupt_ctrl.short_packet_fifo.priority" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.mipi_csi.interrupt_ctrl.rx.events" value=""/>

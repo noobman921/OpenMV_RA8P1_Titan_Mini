@@ -40,10 +40,6 @@
     <listAttribute key="com.renesas.cdt.launch.dsf.externalFlashDestinationAddresses"/>
     <listAttribute key="com.renesas.cdt.launch.dsf.externalFlashDownloadModules"/>
     <stringAttribute key="com.renesas.cdt.launch.dsf.launchSeqType" value="com.renesas.cdt.launch.dsf.launchSequence.e2GdbServer"/>
-    <stringAttribute key="com.renesas.cdt.launch.dsf.restore.mruAddress" value="0x020D0000"/>
-    <listAttribute key="com.renesas.cdt.launch.dsf.restore.mruFiles">
-        <listEntry value="${workspace_loc:\secondary_cpu0_ra8p1\src\romfs0.img}"/>
-    </listAttribute>
     <stringAttribute key="com.renesas.cdt.launch.dsf.serverPath" value="${renesas.support.targetLoc:com.renesas.ide.supportfiles.ra.debug.debugSupportFileTarget}\e2-server-gdb"/>
     <listAttribute key="com.renesas.cdt.launch.ui.address.mruList.memoryMonitorExpression">
         <listEntry value="0x90400000"/>

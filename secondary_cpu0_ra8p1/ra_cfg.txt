@@ -980,7 +980,7 @@ FSP Configuration
         Receive: Data Enable (User Options - Configured VIN input data format is always enabled): YUV422 8-bit
         Interrupts: Interrupt Priorities: Receive Interrupt: Priority 12
         Interrupts: Interrupt Priorities: Data Lane Interrupt: Priority 12
-        Interrupts: Interrupt Priorities: Virtual Channel 0..15 Interrupt: Priority 12
+        Interrupts: Interrupt Priorities: Virtual Channel 0..15 Interrupt: Disabled
         Interrupts: Interrupt Priorities: Power Management: Priority 12
         Interrupts: Interrupt Priorities: Short Packet FIFO: Priority 12
         Interrupts: Receive Events: 

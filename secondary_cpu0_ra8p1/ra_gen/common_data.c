@@ -93,7 +93,7 @@ const mipi_csi_cfg_t g_cam_mipi_csi_cfg =
   .interrupt_cfg.data_lane_cfg.irq = FSP_INVALID_VECTOR,
 #endif
 
-  .interrupt_cfg.virtual_channel_cfg.ipl = (12),
+  .interrupt_cfg.virtual_channel_cfg.ipl = (BSP_IRQ_DISABLED),
 #if defined(VECTOR_NUMBER_MIPICSI_VC)
             .interrupt_cfg.virtual_channel_cfg.irq                  = VECTOR_NUMBER_MIPICSI_VC,
             #else

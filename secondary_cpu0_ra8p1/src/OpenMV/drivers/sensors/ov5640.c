@@ -119,7 +119,8 @@ static const uint8_t default_regs[][3] = {
     { 0x38, 0x21, 0x01 }, // sensor mirror
 
     // ========== image window ==========
-    // ISP 输入 2560x1920, 居中于 2624x1964 物理阵列, ISP 缩放输出 640x480。
+    // Same as HEAD: 2592x1920, 1/2 subsample -> 1296x960 -> ISP scale(2:1) -> 640x480
+    // ISP scale V must be 2:1 integer ratio (OV5640 scaler limitation).
     { 0x38, 0x00, 0x00 }, { 0x38, 0x01, 0x20 }, // Xstart = 32
     { 0x38, 0x02, 0x00 }, { 0x38, 0x03, 0x16 }, // Ystart = 22
     { 0x38, 0x04, 0x0a }, { 0x38, 0x05, 0x20 }, // Xend = 2592
@@ -225,8 +226,8 @@ static const uint8_t default_regs[][3] = {
     { 0x30, 0x07, 0xfb }, // Disable DVP PCLK, enable MIPI clock domain
 
     // ========== frame timing HTS/VTS ==========
-    { 0x38, 0x0c, 0x08 }, { 0x38, 0x0d, 0x50 }, // HTS = 0x0850 = 2128
-    { 0x38, 0x0e, 0x04 }, { 0x38, 0x0f, 0xb0 }, // VTS = 0x04B0 = 1200
+    { 0x38, 0x0c, 0x06 }, { 0x38, 0x0d, 0x40 }, // HTS = 0x0640 = 1600
+    { 0x38, 0x0e, 0x03 }, { 0x38, 0x0f, 0xd8 }, // VTS = 0x03D8 = 984
 
     // ========== 50/60Hz detector ==========
     { 0x3c, 0x01, 0xb4 }, { 0x3c, 0x00, 0x04 },
@@ -250,11 +251,18 @@ static const uint8_t default_regs[][3] = {
     { 0x46, 0x0c, 0x22 }, // VFIFO PCLK manual
     { 0x48, 0x37, 0x0a }, // MIPI global timing
     { 0x38, 0x24, 0x01 }, // MIPI timing tweak
-    { 0x50, 0x01, 0xa3 }, // ISP: AWB/color matrix/UV/scale(bit5)/SDE enable
+    { 0x50, 0x01, 0xa3 }, // ISP: AWB/color matrix/UV/scale(bit5=1,enabled)/SDE enable
 
     // ========== AWB auto ==========
     // 上方 0x680/0x400/0x600 作为 AWB 起点, 由传感器自动调整
     { 0x34, 0x06, 0x00 }, // AWB gain manual DISABLE (auto)
+
+    // ========== 48fps: manual exposure = 984 lines, AGC auto ==========
+    // 20-bit AEC_PK_EXPOSURE (4-bit fraction): value = 984 << 4 = 0x3D80
+    { 0x35, 0x03, 0x01 }, // AEC_PK_MANUAL: bit0=1 manual exposure, bit1=0 AGC auto
+    { 0x35, 0x00, 0x03 }, // AEC_PK_EXPOSURE[19:12]
+    { 0x35, 0x01, 0xd8 }, // AEC_PK_EXPOSURE[11:4]
+    { 0x35, 0x02, 0x00 }, // AEC_PK_EXPOSURE[3:0]
 
     // ========== wake up ==========
     { 0x30, 0x08, 0x02 }, // wake up (clear power-down bit6)
