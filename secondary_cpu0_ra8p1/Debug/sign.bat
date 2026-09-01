@@ -1,7 +1,7 @@
 @echo off
 set MCUBOOT_IMAGE_VERSION=1.1.0
 set MCUBOOT_IMAGE_SIGNING_KEY=..\..\bootloader_ra8p1\ra\mcu-tools\MCUboot\root-ec-p256.pem
-:: 请修改为对应的工具路径
+:: Modify to match your tool path
 set MCUBOOT_APP_BIN_CONVERTER=..\..\..\..\MySoftware\e2studiofsp6.4\toolchains\gcc_arm\13.2.rel1\bin\arm-none-eabi-objcopy.exe
 
 :: Fix SLOT_SIZE for OSPI-based secondary (0x300000 = 3MB)
