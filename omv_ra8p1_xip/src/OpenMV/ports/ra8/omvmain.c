@@ -183,10 +183,10 @@ static int sdcard_flash_init_fs(void) {
         // n_fatent / csize 在 f_mount 时已从 BPB 读出，无需扫描整个 FAT
         uint32_t total_mb = (uint32_t)(((uint64_t)(fs->n_fatent - 2) * fs->csize) / 2048);
         printf("SD: volume size = %lu MB\n", (unsigned long)total_mb);
-        if (total_mb < 1000) {
-            printf("SD: volume too small, reformatting whole card\n");
-            force_format = true;
-        }
+        // if (total_mb < 1000) {
+        //     printf("SD: volume too small, reformatting whole card\n");
+        //     force_format = true;
+        // }
     }
 
     if (res == FR_NO_FILESYSTEM || force_format) {
