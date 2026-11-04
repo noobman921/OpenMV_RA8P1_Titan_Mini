@@ -47,6 +47,17 @@ void gc_collect(void) {
     mp_thread_gc_others();
     #endif
 
+    #if MICROPY_PY_PROTOCOL
+    // stdin 通道的脚本缓冲分配在 GC 堆上，但它的 vstr_t 位于静态结构体里
+    // （ports/ra8/ra8_protocol_channel_stdio.c 的 stdio_channel_ctx），
+    // GC 扫不到静态区。不在这里登记成根，下一次回收就会把它当垃圾释放，
+    // 之后 vstr_add_len 写的就是已释放内存 —— 堆被踩坏后表现为随机
+    // UsageFault（UFSR.UNALIGNED / 停止按钮第二次点击崩溃即此症状）。
+    // 对应 Titan platform/micropython/runtime.c:84 的 titan_protocol_gc_collect()。
+    extern void omv_stdio_gc_mark(void);
+    omv_stdio_gc_mark();
+    #endif
+
     // trace soft timer nodes
     soft_timer_gc_mark_all();
 

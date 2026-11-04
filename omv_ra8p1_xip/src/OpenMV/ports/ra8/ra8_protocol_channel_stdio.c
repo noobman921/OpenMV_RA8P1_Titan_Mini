@@ -69,8 +69,29 @@ static stdio_channel_context_t stdio_channel_ctx;
 static int stdin_channel_init(const omv_protocol_channel_t *channel) {
     stdio_channel_context_t *ctx = channel->priv;
     ctx->script_running = false;
+    /* 直接覆盖 buf 指针、不先 vstr_clear 旧缓冲：软复位后 gc_init() 重建了堆，
+     * 旧指针已经不属于任何 pool，m_del 会走到 gc_free 里的 assert(area) 直接崩。
+     * 旧缓冲不需要手动释放 —— 指针被覆盖后它就不可达了，由 GC 正常回收
+     * （本缓冲本身已由 omv_stdio_gc_mark() 登记为根）。 */
     vstr_init(&ctx->vstrbuf, 2048);
     return 0;
+}
+
+/* 由 ports/renesas-ra/gccollect.c 的 gc_collect() 调用。
+ *
+ * ctx 是**静态**结构体，GC 只扫描「栈 + 寄存器 + 显式登记的根」，扫不到静态区，
+ * 所以 ctx.vstrbuf.buf（vstr_init 用 m_new 分配，在 GC 堆上）没有任何引用 ——
+ * 下一次 gc_collect() 就会把它当垃圾回收。之后 vstr_add_len/vstr_reset 写的就是
+ * 已释放内存：轻则脚本上传错乱，重则堆结构被踩坏，表现为 UsageFault
+ * （UFSR.UNALIGNED）这类随机崩溃。
+ *
+ * 对应 Titan platform/micropython/runtime.c:84 的 titan_protocol_gc_collect()，
+ * 它正是为这个问题加的（titan_stdio.c 用 -Dvstr_init=... 抓同一个指针）。 */
+void omv_stdio_gc_mark(void) {
+    if (stdio_channel_ctx.vstrbuf.buf != NULL) {
+        void *buffer = stdio_channel_ctx.vstrbuf.buf;
+        gc_collect_root(&buffer, 1);
+    }
 }
 
 static int stdout_channel_init(const omv_protocol_channel_t *channel) {

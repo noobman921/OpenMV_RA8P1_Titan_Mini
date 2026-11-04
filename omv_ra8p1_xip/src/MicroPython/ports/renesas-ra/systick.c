@@ -103,9 +103,27 @@ uint32_t soft_timer_get_ms(void) {
     return (uint32_t) xTaskGetTickCount();   /* 1 tick = 1 ms */
 }
 
-/* svc 任务每 1ms 无条件调用 soft_timer_handler()，所以无需在这里安排唤醒。 */
+/* soft_timer_handler() 只在 VM 线程运行（由 ra8_hal_poll 调用），与
+ * soft_timer_insert/remove 同线程 —— 和 Titan 的 mphal.c 同构。
+ * 这里只记录最近一次的到期时刻，真正的堆操作交给 VM 线程。 */
+static volatile bool soft_timer_pending;
+static volatile uint32_t soft_timer_deadline;
+
 void soft_timer_schedule_at_ms(uint32_t ticks_ms) {
-    (void) ticks_ms;
+    soft_timer_deadline = ticks_ms;
+    soft_timer_pending = true;
+}
+
+/* 由 ports/ra8/omvmain.c 的 ra8_hal_poll() 在 VM 线程调用：到期才推进定时器堆。 */
+void ra8_soft_timer_service(void) {
+    if (!soft_timer_pending) {
+        return;
+    }
+    if ((int32_t) ((uint32_t) xTaskGetTickCount() - soft_timer_deadline) < 0) {
+        return;
+    }
+    soft_timer_pending = false;
+    soft_timer_handler();
 }
 
 mp_uint_t mp_hal_ticks_us(void) {

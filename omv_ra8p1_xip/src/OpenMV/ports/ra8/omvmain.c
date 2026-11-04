@@ -183,10 +183,10 @@ static int sdcard_flash_init_fs(void) {
         // n_fatent / csize 在 f_mount 时已从 BPB 读出，无需扫描整个 FAT
         uint32_t total_mb = (uint32_t)(((uint64_t)(fs->n_fatent - 2) * fs->csize) / 2048);
         printf("SD: volume size = %lu MB\n", (unsigned long)total_mb);
-        if (total_mb < 1000) {
-            printf("SD: volume too small, reformatting whole card\n");
-            force_format = true;
-        }
+        // if (total_mb < 1000) {
+        //     printf("SD: volume too small, reformatting whole card\n");
+        //     force_format = true;
+        // }
     }
 
     if (res == FR_NO_FILESYSTEM || force_format) {
@@ -317,8 +317,12 @@ extern int ra8_npu_init(void);
  *
  * 并发安全依赖 mphalport.h 里补的 MICROPY_BEGIN/END_ATOMIC_SECTION。
  * ==========================================================================*/
+#define RA8_VM_POLL_MS  (10)
+static void ra8_vm_poll_schedule(void);
+
 static void ra8_svc_task(void *pvParameters) {
     FSP_PARAMETER_NOT_USED(pvParameters);
+    uint32_t vm_poll_div = 0;
     for (;;) {
         /* 把事件队列**排空**再让出，而不是一次调用就睡。
          * tud_task_ext() 单次最多处理 CFG_TUD_TASK_EVENTS_PER_RUN 个事件
@@ -334,9 +338,13 @@ static void ra8_svc_task(void *pvParameters) {
          * 必须在 tud_task_ext() 之后调用（对应 Titan ra8_usb.c 的 usb_thread）。 */
         ra8_msc_poll();
 #endif
-        /* 时间基已改为直接取 FreeRTOS tick（见 systick.c 的 soft_timer_get_ms），
-         * 本任务不再需要维护 uwTick —— 那个变量曾经一被饿死就让所有软定时器停摆。 */
-        soft_timer_handler();
+        /* 每 10ms 给 VM 挂一个轮询节点。本任务**不碰** MicroPython 的软定时器
+         * 堆和协议状态 —— 那些都归 VM 线程（见 ra8_hal_poll）。
+         * 与 Titan 一致：它的 usb_thread 也只做 tud_task_ext + msc_poll。 */
+        if (++vm_poll_div >= RA8_VM_POLL_MS) {
+            vm_poll_div = 0;
+            ra8_vm_poll_schedule();
+        }
 
         vTaskDelay(1);
     }
@@ -357,20 +365,47 @@ void ra8_vm_yield_if_needed(void) {
 /* ----------------------------------------------------------------------------
  * 10ms 的 VM 轮询节拍
  * ----------------------------------------------------------------------------
- * 对应 Titan_Mini_Openmv/platform/micropython/mphal.c:70-80 的 vm_poll_timer。
+ * 对应 Titan_Mini_Openmv/platform/micropython/mphal.c:56-80。
  *
  * 为什么需要它：调度节点（mp_sched_schedule_node）只有在 **VM 检查待办**时
- * 才会被运行。所以「让出」必须有东西**周期性**地挂上节点，否则：
+ * 才会被运行。所以必须有东西**周期性**地挂上节点，否则：
  *   - Python 忙循环：靠协议节点（50ms）也能走到，但 50ms 对 U 盘太粗；
  *   - 纯 C 代码执行期间（传感器初始化等）：完全没人挂节点。
- * 10ms 挂一次，配合上面 ra8_vm_yield_if_needed()，把 worker 的响应延迟
- * 从 50ms 压到 10ms —— 这正是 U 盘挂载偏慢的直接原因。
  *
- * 节拍由 svc 任务里的 soft_timer_handler() 驱动（与软定时器同一套基础设施），
- * 所以本定时器在有无 IDE 会话时都会准时触发。 */
-#define RA8_VM_POLL_MS  (10)
-static soft_timer_entry_t vm_poll_timer;
+ * 与 Titan 一致：**由 USB 任务（svc）每 10ms 挂一次节点**，不再用 soft timer
+ * 驱动。原因是 soft_timer_handler() 已经移到 VM 线程（见 ra8_hal_poll），
+ * 若这里还依赖 soft timer，就变成「handler 等节点、节点等 handler」的循环依赖。
+ *
+ * 优先级链：svc(4) > VM(3) > msc_io(2)，与 Titan 的 tusb(15) > openmv(20) >
+ * msc_io(25) 同序。 */
 static mp_sched_node_t vm_poll_node;
+static volatile bool vm_poll_ready;
+
+/* 软复位会保留静态调度链表（mp_init 不清 sched_head/tail）。若复位瞬间
+ * vm_poll_node 仍在链上，之后每次 schedule 都会因 callback != NULL 被拒，
+ * VM 轮询就永久停摆。复位前后把它摘下来并清空 callback。
+ * 对应 Titan mphal.c:24-47 的 vm_poll_unlink()。 */
+static void ra8_vm_poll_unlink(void) {
+    mp_sched_node_t *previous = NULL;
+    mp_sched_node_t *node = MP_STATE_VM(sched_head);
+    while (node) {
+        if (node == &vm_poll_node) {
+            if (previous) {
+                previous->next = node->next;
+            } else {
+                MP_STATE_VM(sched_head) = node->next;
+            }
+            if (MP_STATE_VM(sched_tail) == node) {
+                MP_STATE_VM(sched_tail) = previous;
+            }
+            break;
+        }
+        previous = node;
+        node = node->next;
+    }
+    vm_poll_node.callback = NULL;
+    vm_poll_node.next = NULL;
+}
 
 /* 协议轮询的重入标志 + 异常清场回调。
  *
@@ -407,7 +442,9 @@ static void ra8_vm_poll_task(mp_sched_node_t *node) {
     ra8_vm_yield_if_needed();
 }
 
-/* 协议轮询主体：会话同步 + 协议状态机。由 ra8_vm_poll_task 每 10ms 调用。 */
+/* 协议轮询主体：会话同步 + 软定时器 + 协议状态机。
+ * 由 ra8_vm_poll_task 每 10ms 在 **VM 线程**调用，顺序与 Titan
+ * platform/micropython/mphal.c 的 mp_hal_poll() 一致。 */
 void ra8_hal_poll(void) {
     if (ra8_protocol_polling) {
         return;
@@ -428,6 +465,12 @@ void ra8_hal_poll(void) {
     ra8_usb_session_poll();
 #endif
 
+    /* 软定时器推进。必须放在 VM 线程 —— soft_timer_handler() 直接改
+     * soft_timer_heap（pairheap），而 soft_timer_insert/remove 也在本线程，
+     * 同线程串行就不存在并发。Titan 同样在 mp_hal_poll() 里调。 */
+    extern void ra8_soft_timer_service(void);
+    ra8_soft_timer_service();
+
     /* 上游 1.7.3 把协议任务入口从 omv_protocol_task() 改名为 omv_protocol_poll()。 */
     extern int omv_protocol_poll(void);
     extern bool omv_protocol_is_active(void);
@@ -439,9 +482,11 @@ void ra8_hal_poll(void) {
     ra8_protocol_polling = false;
 }
 
-static void ra8_vm_poll_tick(soft_timer_entry_t *self) {
-    (void) self;
-    mp_sched_schedule_node(&vm_poll_node, ra8_vm_poll_task);
+/* 由 svc 任务每 10ms 调用一次（见 ra8_svc_task）。 */
+static void ra8_vm_poll_schedule(void) {
+    if (vm_poll_ready) {
+        mp_sched_schedule_node(&vm_poll_node, ra8_vm_poll_task);
+    }
 }
 
 /* DTCM 快速池 —— 对应 Titan_Mini_Openmv/platform/micropython/runtime.c:36 的
@@ -547,6 +592,10 @@ void omv_main(void *pvParameters) {
 //    }
 soft_reset:
 
+    /* 复位窗口内停止给 VM 挂轮询节点：此刻协议/调度器状态正在重建，
+     * 让 svc 继续 schedule 只会把节点塞进半初始化的链表。 */
+    vm_poll_ready = false;
+
     /* Initialize stack control for this FreeRTOS task */
     mp_cstack_init_with_sp_here(0x8000 - 2048);
 
@@ -608,13 +657,12 @@ soft_reset:
     /* Init OpenMV protocol */
     omv_protocol_init_default();
 
-    /* 10ms VM 轮询节拍。放在这里（soft_reset 之后）而不是标签之前：
-     * 软复位路径末尾会调 soft_timer_deinit() 清空定时器堆，放前面会在
-     * 第一次软复位后失效。与协议自己的 50ms 定时器同样的处理方式。 */
-    soft_timer_remove(&vm_poll_timer);          // 未挂链时是 no-op
-    soft_timer_static_init(&vm_poll_timer, SOFT_TIMER_MODE_PERIODIC,
-                           RA8_VM_POLL_MS, ra8_vm_poll_tick);
-    soft_timer_insert(&vm_poll_timer, RA8_VM_POLL_MS);
+    /* 10ms VM 轮询节拍：节拍由 svc 任务提供（见 ra8_svc_task），这里只放开闸门。
+     * soft reset 保留静态调度链表，而 vm_poll_node 是静态变量；复位前先把它从
+     * 链表里摘掉并清 callback，否则 schedule 会一直因 "already scheduled" 被拒，
+     * VM 轮询永久停摆。对应 Titan mphal.c 的 ra8_vm_poll_start()。 */
+    ra8_vm_poll_unlink();
+    vm_poll_ready = true;
 
     /* Init camera if first boot */
 #if MICROPY_PY_CSI
