@@ -23,7 +23,23 @@ while True:
     clock.tick()
     img = sensor.snapshot()
     scores = model.predict([img])[0]
-    best = int(np.argmax(scores))
+    # best = int(np.argmax(scores))
+    # 1. 确保 scores 是一维的，并转换成普通 Python 列表
+    if hasattr(scores, "flatten"):
+        scores = scores.flatten()
+    scores_list = list(scores)  # 强制转成普通列表，避免 ulab 数组的索引陷阱
+
+    # 2. 手动找到最大值的索引
+    best = 0
+    for i in range(1, len(scores_list)):
+        if scores_list[i] > scores_list[best]:
+            best = i
+
+    # 3. 安全检查：确保索引在 labels 范围内
+    if model.labels and best < len(model.labels):
+        name = model.labels[best]
+    else:
+        name = str(best)  # 如果越界，直接显示数字索引，方便调试
     name = model.labels[best] if model.labels else str(best)
 
     img.draw_string((5, 5), "%s %.2f" % (name, scores[best]), color=(0, 255, 0))

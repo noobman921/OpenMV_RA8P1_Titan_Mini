@@ -1,8 +1,7 @@
 # YOLOv8n COCO80 通用目标检测 - SD Card 版本
 # 模型: models_vela/yolov8n_coco80_192/  (Ethos-U55-256, vela 5.2.0)
 # 拷到 SD: /sdcard/models/yolov8n_coco80_sdcard_test.tflite + .txt (80 行)
-#
-# 与 yolov8n_sdcard_test.py 的区别：那个是 person 单类，这个是 COCO 80 类。
+
 import ml
 import sensor
 import time

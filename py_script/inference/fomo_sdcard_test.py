@@ -86,7 +86,7 @@ while True:
 
     t_end = time.ticks_ms()
     elapsed = time.ticks_diff(t_end, t_start)
-    print("cal time:", t_end-t_s)
+    # print("cal time:", t_end-t_s)
     time_list.append(elapsed)
 
     if elapsed > 0:

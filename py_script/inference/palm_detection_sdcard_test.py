@@ -16,7 +16,7 @@ TEST_MODE = "sdcard"  # 改为 "romfs" 或 "sdcard"
 
 # ====== 初始化 ======
 sensor.reset()
-sensor.set_framesize(sensor.VGA)
+sensor.set_framesize(sensor.QVGA)
 sensor.set_pixformat(sensor.RGB565)
 sensor.skip_frames(time=1000)
 

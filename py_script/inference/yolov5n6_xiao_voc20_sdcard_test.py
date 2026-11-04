@@ -1,9 +1,7 @@
 # YOLOv5n6-xiao VOC20 目标检测 - SD Card 版本
 # 模型: models_vela/yolov5n6_xiao_voc20_192/  (Titan 预编译版，Vela 5.1.0)
 # 拷到 SD: /sdcard/models/yolov5n6_xiao_voc20_sdcard_test.tflite + .txt
-#
-# 说明：该模型的原始 tflite 未公开下载地址，这里用的是 Titan 仓库里已编译好的
-# Ethos-U55-256 版本。加速器配置与我们一致，可直接跑。
+
 import ml
 import sensor
 import time

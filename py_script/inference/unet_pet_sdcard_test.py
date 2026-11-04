@@ -1,11 +1,7 @@
 # U-Net / MobileNetV2 宠物分割（128x128）- SD Card 版本
 # 模型: models_vela/unet_mobilenetv2_128/  (Ethos-U55-256, vela 5.2.0)
 # 拷到 SD: /sdcard/models/unet_pet_sdcard_test.tflite + .txt
-#
-# ⚠️ 该模型 5.97 MB，超过本工程 GC 的 SDRAM 区容量（0x681C2000..0x68600000
-#    = 4.25 MB），ml.Model() 会因分配失败报 "Failed to allocate tensors"。
-#    要用它需要先改 omvmain.c 的 OMV_GC_SDRAM_END 或改用独立静态区。
-#    其余 12 个模型都在容量内。
+
 import image
 import ml
 import sensor

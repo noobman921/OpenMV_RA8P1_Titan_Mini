@@ -26,14 +26,29 @@ last = time.ticks_ms()
 while True:
     clock.tick()
     img = sensor.snapshot()
-    scores = model.predict([img])[0]
+    # scores = model.predict([img])[0]
 
-    order = np.argsort(scores)
+    # order = np.argsort(scores)
+    # text = ""
+    # for i in range(TOP_K):
+    #     idx = int(order[len(order) - 1 - i])
+    #     name = model.labels[idx] if model.labels else str(idx)
+    #     text += "%s %.2f  " % (name, scores[idx])
+    # img.draw_string((5, 5), text[:36], color=(0, 255, 0))
+    scores = model.predict([img])[0]
+    if hasattr(scores, "flatten"):
+        scores = scores.flatten()
+
+    # 纯 Python 降序索引，绕开 ulab argsort
+    order = [i for i, _ in sorted(enumerate(scores), key=lambda x: x[1], reverse=True)]
+
     text = ""
     for i in range(TOP_K):
-        idx = int(order[len(order) - 1 - i])
+        idx = int(order[i])
         name = model.labels[idx] if model.labels else str(idx)
-        text += "%s %.2f  " % (name, scores[idx])
+        val = float(scores[idx])
+        text += "%s %.2f  " % (name, val)
+
     img.draw_string((5, 5), text[:36], color=(0, 255, 0))
 
     if time.ticks_diff(time.ticks_ms(), last) >= 1000:

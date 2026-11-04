@@ -70,20 +70,6 @@ time_list = []
 fps_list = []
 det_count_list = []
 
-# ====== 主循环 ======
-# 每帧打印分段耗时。
-#
-# 为什么加这个：LC + 预览开着会掉连接，而 blaze + 预览、LC + 无预览都不掉。
-# 嫌疑是「predict 期间 VM 不让出 → 协议任务停摆 → IDE 等不到 CHANNEL_READ
-# 的响应而放弃会话」。要验证就得知道 predict 到底占多久。
-#
-# 参照：blaze 的 pred ≈ 20~27 ms，且【每帧都打印这行】也不掉 —— 所以打印本身
-# 不引入问题，加在这里是安全的。
-#
-# 对照跑法（4 组，只看边界）：
-#   LC + 预览开  → 预期掉；pred 值记下来
-#   LC + 预览关  → 预期不掉；pred 值应与上面【基本相同】
-#   若两者 pred 一样而只有一个掉，则「predict 时长」是触发量，机制成立。
 while True:
     t_start = time.ticks_ms()
 
