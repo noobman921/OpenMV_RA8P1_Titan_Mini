@@ -1,0 +1,56 @@
+build/py/objenumerate.o: ../py/objenumerate.c \
+ D:/MySoftware/MSYS2/mingw64/include/stdlib.h \
+ D:/MySoftware/MSYS2/mingw64/include/corecrt.h \
+ D:/MySoftware/MSYS2/mingw64/include/_mingw.h \
+ D:/MySoftware/MSYS2/mingw64/include/_mingw_mac.h \
+ D:/MySoftware/MSYS2/mingw64/include/_mingw_secapi.h \
+ D:/MySoftware/MSYS2/mingw64/include/vadefs.h \
+ D:/MySoftware/MSYS2/mingw64/include/corecrt_wstdlib.h \
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/limits.h \
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/syslimits.h \
+ D:/MySoftware/MSYS2/mingw64/include/limits.h \
+ D:/MySoftware/MSYS2/mingw64/include/crtdefs.h \
+ D:/MySoftware/MSYS2/mingw64/include/sec_api/stdlib_s.h \
+ D:/MySoftware/MSYS2/mingw64/include/malloc.h \
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/mm_malloc.h \
+ D:/MySoftware/MSYS2/mingw64/include/errno.h \
+ D:/MySoftware/MSYS2/mingw64/include/assert.h ../py/runtime.h \
+ ../py/mpstate.h \
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdint.h \
+ D:/MySoftware/MSYS2/mingw64/include/stdint.h \
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stddef.h \
+ D:/MySoftware/MSYS2/mingw64/include/stddef.h ../py/mpconfig.h \
+ mpconfigport.h ../py/mpthread.h ../py/misc.h \
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdbool.h \
+ ../py/nlr.h ../py/obj.h ../py/qstr.h build/genhdr/qstrdefs.generated.h \
+ ../py/mpprint.h ../py/runtime0.h ../py/objlist.h ../py/objexcept.h \
+ ../py/objtuple.h build/genhdr/root_pointers.h ../py/pystack.h \
+ ../py/cstack.h
+../py/objenumerate.c :
+ D:/MySoftware/MSYS2/mingw64/include/stdlib.h :
+ D:/MySoftware/MSYS2/mingw64/include/corecrt.h :
+ D:/MySoftware/MSYS2/mingw64/include/_mingw.h :
+ D:/MySoftware/MSYS2/mingw64/include/_mingw_mac.h :
+ D:/MySoftware/MSYS2/mingw64/include/_mingw_secapi.h :
+ D:/MySoftware/MSYS2/mingw64/include/vadefs.h :
+ D:/MySoftware/MSYS2/mingw64/include/corecrt_wstdlib.h :
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/limits.h :
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/syslimits.h :
+ D:/MySoftware/MSYS2/mingw64/include/limits.h :
+ D:/MySoftware/MSYS2/mingw64/include/crtdefs.h :
+ D:/MySoftware/MSYS2/mingw64/include/sec_api/stdlib_s.h :
+ D:/MySoftware/MSYS2/mingw64/include/malloc.h :
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/mm_malloc.h :
+ D:/MySoftware/MSYS2/mingw64/include/errno.h :
+ D:/MySoftware/MSYS2/mingw64/include/assert.h ../py/runtime.h :
+ ../py/mpstate.h :
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdint.h :
+ D:/MySoftware/MSYS2/mingw64/include/stdint.h :
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stddef.h :
+ D:/MySoftware/MSYS2/mingw64/include/stddef.h ../py/mpconfig.h :
+ mpconfigport.h ../py/mpthread.h ../py/misc.h :
+ D:/MySoftware/MSYS2/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdbool.h :
+ ../py/nlr.h ../py/obj.h ../py/qstr.h build/genhdr/qstrdefs.generated.h :
+ ../py/mpprint.h ../py/runtime0.h ../py/objlist.h ../py/objexcept.h :
+ ../py/objtuple.h build/genhdr/root_pointers.h ../py/pystack.h :
+ ../py/cstack.h :
