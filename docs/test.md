@@ -47,3 +47,9 @@
 
 16. yolov8n_pose_sdcard_test.py        YOLOv8n 轻量姿态估计模型  
 ![alt](/pic/test16.png)  
+
+17. face_landmarks_dual_sdcard_test.py BlazeFace 轻量人脸检测模型,人脸关键点检测模型  
+![alt](/pic/test17.png)  
+
+18. hand_landmarks_dual_sdcard_test.py 手掌检测模型，手部关键点检测模型  
+![alt](/pic/test18.png)  
